@@ -1,6 +1,7 @@
 <?php
 /*
  * Author: Callan Heard (c.j.heard@ncl.ac.uk)
+ * Project: NCL CSC3122: Mobile Computer Systems Development, Portfolio Part 2
  * Purpose: settle app handler for back-end requests to the database
  */
 
@@ -28,6 +29,13 @@
 		else {
 			return $connection;                                         //Or return the connection
 		}
+		
+	}
+
+	//Code for handling log-in request
+	if (isset($_GET['login'])) {
+		
+		header('Location: settle/dashboard.html');
 		
 	}
 	

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+	<head>
+
+		<!-- Page info -->
+		<meta charset="utf-8" />
+		<meta name="author" content="Callan Heard (c.j.heard@ncl.ac.uk)" />
+		<meta name="description" content="NCL CSC3122: Mobile Computer Systems Development, Portfolio Part 2 - settle app dashboard page" />
+		<title>Dashboard | Settle</title>
+		
+		<!-- Stylesheets -->
+		<link rel="stylesheet" type="text/css" href="_css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="_css/dashboard.css" />
+
+	</head>
+	<body>
+	
+		<!-- Page top bar -->
+		<div id="topbar" class="clear">
+		
+			<a href="#">=</a>											<!-- Show nav overlay button -->
+			<h1>Dashboard</h1>											<!-- Main page title -->
+			
+		</div>
+		
+		<!-- Main dashboard overview -->
+		<div id="dashboard" class="clear">
+		
+			<a href="#">+</a>											<!-- Create new payment -->
+			
+			<!-- User total values -->
+			<div id="totals">
+			
+				<!-- Changing page headings -->
+				<h2 class="selected">Balance</h2>
+				<h2>Total You Owe</h2>
+				<h2>Total You're Owed</h2>
+				
+				<h3 id="total">0.00</h3>								<!-- Total value being displayed -->
+				
+			</div>
+			
+		</div>
+		
+		<!-- Outgoing payments -->
+		<div id="owes" class="payment_list">
+			
+			<h4>You Owe</h4>											<!-- Payment heading -->
+			
+			<!-- List of payments -->
+			<ul>
+			
+				<!-- Dummy payment -->
+				<li class="payment clear">
+					
+					<a href="#" class="clear">
+					
+						<img src="http://lorempixel.com/40/40/people/4" />	<!-- Payment host profile image -->
+						
+						<div class="details">
+							
+							<div class="left">
+							
+								<p>Lunch with the guys from the other night that we had a great laugh</p>
+								<p>John Smith</p>
+								
+							</div>
+								
+							<p class="amount">0.00</p>
+							
+						</div>
+					
+					</a>
+					
+					<hr />
+					
+				</li>
+				
+				<!-- Dummy payment -->
+				<li class="payment clear">
+					
+					<a href="#" class="clear">
+					
+						<img src="http://lorempixel.com/40/40/people/4" />	<!-- Payment host profile image -->
+						
+						<div class="details">
+							
+							<div class="left">
+							
+								<p>Lunch with the guys from the other night that we had a great laugh</p>
+								<p>John Smith</p>
+								
+							</div>
+								
+							<p class="amount">0.00</p>
+							
+						</div>
+					
+					</a>
+					
+					<hr />
+					
+				</li>
+				
+			</ul>
+			
+		</div>
+		
+		<!-- Incoming payments -->
+		<div id="owed" class="payment_list">
+			
+			<h4>You're Owed</h4>										<!-- Payment heading -->
+			
+			<!-- List of payments -->
+			<ul></ul>
+			
+		</div>
+
+	</body>
+</html>
