@@ -10,33 +10,37 @@
 		
 		<!-- Stylesheets -->
 		<link rel="stylesheet" type="text/css" href="_css/reset.css" />
-		<link rel="stylesheet" type="text/css" href="_css/dashboard.css" />
+		<link rel="stylesheet" type="text/css" href="_css/main.css" />
+		
+		<!-- Scripts -->
+		<script type="text/javascript" src="_js/system.js"></script>
+		<script type="text/javascript" src="_js/classes.js"></script>
 
 	</head>
-	<body>
+	<body onload="load(true);">
 	
 		<!-- Page top bar -->
 		<div id="topbar" class="clear">
 		
-			<a href="#">=</a>											<!-- Show nav overlay button -->
-			<h1>Dashboard</h1>											<!-- Main page title -->
+			<a href="#">=</a>	<!-- Show nav overlay button -->
+			<h1>Dashboard</h1>	<!-- Main page title -->
 			
 		</div>
 		
 		<!-- Main dashboard overview -->
-		<div id="dashboard" class="clear">
+		<div id="overview" class="clear">
 		
-			<a href="#">+</a>											<!-- Create new payment -->
+			<a href="#">+</a> <!-- Create new payment -->
 			
-			<!-- User total values -->
+			<!-- Overview headings -->
 			<div id="totals">
 			
 				<!-- Changing page headings -->
-				<h2 class="selected">Balance</h2>
 				<h2>Total You Owe</h2>
 				<h2>Total You're Owed</h2>
+				<h2 class="selected">Balance</h2>
 				
-				<h3 id="total">0.00</h3>								<!-- Total value being displayed -->
+				<h3 id="total">0.00</h3> <!-- Total value being displayed -->
 				
 			</div>
 			
@@ -45,74 +49,20 @@
 		<!-- Outgoing payments -->
 		<div id="owes" class="payment_list">
 			
-			<h4>You Owe</h4>											<!-- Payment heading -->
+			<h4>You Owe</h4> <!-- Payment list heading -->
 			
 			<!-- List of payments -->
-			<ul>
-			
-				<!-- Dummy payment -->
-				<li class="payment clear">
-					
-					<a href="#" class="clear">
-					
-						<img src="http://lorempixel.com/40/40/people/4" />	<!-- Payment host profile image -->
-						
-						<div class="details">
-							
-							<div class="left">
-							
-								<p>Lunch with the guys from the other night that we had a great laugh</p>
-								<p>John Smith</p>
-								
-							</div>
-								
-							<p class="amount">0.00</p>
-							
-						</div>
-					
-					</a>
-					
-					<hr />
-					
-				</li>
-				
-				<!-- Dummy payment -->
-				<li class="payment clear">
-					
-					<a href="#" class="clear">
-					
-						<img src="http://lorempixel.com/40/40/people/4" />	<!-- Payment host profile image -->
-						
-						<div class="details">
-							
-							<div class="left">
-							
-								<p>Lunch with the guys from the other night that we had a great laugh</p>
-								<p>John Smith</p>
-								
-							</div>
-								
-							<p class="amount">0.00</p>
-							
-						</div>
-					
-					</a>
-					
-					<hr />
-					
-				</li>
-				
-			</ul>
+			<ul><li>None :)</li></ul>
 			
 		</div>
 		
 		<!-- Incoming payments -->
 		<div id="owed" class="payment_list">
 			
-			<h4>You're Owed</h4>										<!-- Payment heading -->
+			<h4>You're Owed</h4> <!-- Payment list heading -->
 			
 			<!-- List of payments -->
-			<ul></ul>
+			<ul><li>None :(</li></ul>
 			
 		</div>
 

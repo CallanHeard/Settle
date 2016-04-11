@@ -5,13 +5,19 @@
  * Purpose: settle app handler for back-end requests to the database
  */
 
+	//Allow cross-server requests
+	header('Content-type: text/html');
+	header('Access-Control-Allow-Origin: *');
+ 
 	//Database Connection values
 	$server_name	= 'localhost';
 	$username		= 'root';
 	$password		= '';
 	$database_name	= 'settle';
 
-	//Function for establishing a connection to the database
+	/*
+	 * establish_connection function for establishing a connection to the database
+	 */
 	function establish_connection() {
 		
 		//Create new MySQLi connection
@@ -31,12 +37,22 @@
 		}
 		
 	}
-
-	//Code for handling log-in request
-	if (isset($_GET['login'])) {
+	
+	/*
+	 * Handle profile requests
+	 */
+	if (isset($_GET['user'])) {
 		
-		header('Location: settle/dashboard.html');
+		$connection = establish_connection(); //Establish database connection
+		
+		$sql = "SELECT * FROM user WHERE id={$_GET['user']}";	//Generate SQL
+		$result = $connection->query($sql);						//And execute
+		
+		//There should only be one
+		if ($result->num_rows == 1) {
+			echo json_encode($result->fetch_assoc()); //Return user details as JSON object
+		}
+		
+		$connection->close(); //Close database connection
 		
 	}
-	
-?>
