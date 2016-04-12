@@ -8,7 +8,9 @@
  * small:	12px (75%)
  * xsmall:	10px (62.5%)
  *
- * grey: #DDDDDD
+ * grey:		#DDDDDD
+ * dark grey:	#BBBBBB
+ * blue:		#3366BB
  */
 
 /* Heading font */
@@ -52,6 +54,12 @@ body > * {
 	display: inline;
 }
 
+/* Top bar links */
+#topbar a {
+	color:		#000000;
+	opacity:	0.8;
+}
+
 /* Page title */
 #topbar h1 {
 	float:			right;
@@ -66,9 +74,12 @@ body > * {
 	border-bottom:	1px solid #DDDDDD;
 }
 
-/* All overview direct children */
-#overview > * {
-	display: inline;
+/* Overview link */
+#overview a {
+	float:		left;
+	margin:		10px 20px 0;
+	font-size:	48px; /* Large */
+	color:		#BBBBBB;
 }
 
 /* All total value headings */
@@ -139,6 +150,8 @@ body > * {
 .payment img {
 	margin:			5px;
 	border-radius:	100px;
+	height:			40px;
+	width:			40px;
 }
 
 /* Payment details */
@@ -152,7 +165,7 @@ body > * {
 .payment .details .left {
 	float:			left;
 	margin-top:		20px;
-	width:			75%;
+	width:			60%;
 }
 
 /* Payment details ellipsis overflow effect */
@@ -165,20 +178,21 @@ body > * {
 
 /* Slightly vary detail font styles/sizes */
 .payment .details .left p:nth-child(1) {
-	font-size:		12px;
+	font-size:		12px; /* small */
 	font-weight:	bold;
 	text-transform:	uppercase;
 }
 
 /* Slightly vary detail font styles/sizes */
 .payment .details .left p:nth-child(2) {
-	font-size: 10px;
+	font-size: 10px; /* xsmall */
 }
 
 /* Payment amount */
 .payment .details .amount {
 	float:			right;
 	margin-top:		10px;
+	width:			40%;
 	text-align:		right;
 	font-family:	Mono;
 	color:			#000000;
@@ -186,4 +200,93 @@ body > * {
 
 .payment .details .amount:before {
 	content: '\00a3'; /* Pound sign before value */
+}
+
+/* Black out background for sidebar */
+#sidebar .overlay {
+	position:	absolute;
+	top:		0;
+	left:		0;
+	padding:	0;
+	height:		100%;
+	width:		100%;
+	background:	#000000;
+	opacity:	0.7;
+}
+
+/* Contents of sidebar */
+#sidebar ul {
+	position:		absolute;
+	top:			0;
+	left:			0;
+	width:			75%;
+	height:			100%;
+	background:		#FFFFFF;
+	font-family:	Body;
+}
+
+/* Separate account option */
+#sidebar ul li:last-of-type {
+	margin-top: 20px;
+}
+
+/* Menu option links */
+#sidebar ul li a {
+	display:			block;
+	padding:			5px 10px;
+	color:				#000000;
+	text-decoration:	none;
+}
+
+/* Menu option link click effect */
+#sidebar ul li a:active {
+	color: #3366BB;
+}
+
+/* Menu icons */
+#sidebar ul li a i {
+	float: right;
+}
+
+/* User profile in sidebar */
+.profile {
+	margin-bottom:		20px;
+	padding:			10px;
+	background:			url('../_img/congruent_pentagon/congruent_pentagon.png');
+	background-size:	100px;
+	font-size:			12px; /* small */
+}
+
+/* Profile image */
+.profile img {
+	margin-bottom:	10px;
+	height:			50px;
+	width:			50px;
+	border-radius:	100px;
+}
+
+/* User details */
+.profile p {
+	width:		100%;
+	word-wrap:	break-word; /* Wrap name/email address */
+}
+
+/* Bold name */
+.profile p:nth-child(2) {
+	font-weight: bold;
+}
+
+/* Score */
+.profile p:nth-child(4) {
+	margin-top:		10px;
+	font-weight:	bold;
+}
+
+/* Score value */
+.profile p:nth-child(4) span {
+	font-weight: normal;
+}
+
+.profile p:nth-child(4) span:after {
+	content: '%'; /* Percent sign after value */
 }

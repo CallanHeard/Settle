@@ -6,14 +6,17 @@
 
 	var server = 'http://localhost/csc3122/';	//Back-end server location
 	var handle = 'handle.php?';					//Handler file name
-	var user;
+	
+	var id;			//Current user ID
+	var user;		//Current user
+	var payments;	//Current user's payments
 
 	/*
-	* load function for retrieving page content from database
-	*/
-	function load(nav) {
+	 * load function for retrieving page content from database
+	 */
+	function load(top, nav) {
 
-		var id = getParam('id'); //Get user ID
+		id = getParam('id'); //Get user ID
 
 		//If ID is present
 		if (id != null && id != '') {
@@ -34,9 +37,14 @@
 			xmlhttp.open('GET', server + handle + 'user=' + id, false);	//Specify AJAX request
 			xmlhttp.send();												//And send
 
+			//If page requires topbar
+			if (top) {
+				topbar(top); //Add topbar to page
+			}
+			
 			//If page required sidebar
 			if (nav) {
-				sidebar();
+				sidebar(); //Add sidebar to page
 			}
 			
 		}
@@ -48,9 +56,9 @@
 	}
 
 	/*
-	* getParam function for retrieving a query parameter from the URL string
-	* Source: http://stackoverflow.com/a/901144/2030247
-	*/
+	 * getParam function for retrieving a query parameter from the URL string
+	 * Source: http://stackoverflow.com/a/901144/2030247
+	 */
 	function getParam(name, url) {
 		if (!url) url = window.location.href;
 		name = name.replace(/[\[\]]/g, "\\$&");
@@ -62,19 +70,100 @@
 	}
 	
 	/*
+	 * topbar function for adding navigational topbar to page
+	 */
+	function topbar(title) {
+		
+		//Generate markup
+		var markup = '<!-- Page top bar -->\
+<div id="topbar" class="clear">\
+<a href="#" onclick="toggleNav();"><i class="fa fa-bars" aria-hidden="true"></i></a> <!-- Show nav overlay button -->\
+<h1>' + title + '</h1> <!-- Main page title --></div>';
+		
+		document.body.innerHTML = markup + document.body.innerHTML; //Append markup to page
+		
+	}
+	
+	/*
 	 * sidebar function for adding navigational sidebar to page
 	 */
 	function sidebar() {
 
-		var markup = '<div id="sidebar">' + user + '\
+		//Generate markup
+		var markup = '<!-- Page navigation -->\
+<div id="sidebar" style="display: none">\
+<div class="overlay" onclick="toggleNav();"></div>\
 <ul>\
-<li>Dashboard</li>\
-<li>Notifications</li>\
-<li>New Payment</li>\
-<li>Account</li>\
+<li>' + user + '</li>\
+<li><a href="#">Dashboard<i class="fa fa-home" aria-hidden="true"></i></a></li>\
+<li><a href="#">Notification<i class="fa fa-flag" aria-hidden="true"></i></a></li>\
+<li><a href="#">New Payment<i class="fa fa-plus" aria-hidden="true"></i></a></li>\
+<li><a href="#">Account<i class="fa fa-wrench" aria-hidden="true"></i></a></li>\
 </ul>\
 </div>';
 		
-		document.body.innerHTML += markup;
+		document.body.innerHTML += markup; //Append markup to page
+		
+	}
+	
+	/*
+	 * toggleNav function for showing/hiding sidebar
+	 */
+	function toggleNav() {
+		
+		/* TODO Slide plugin */
+		var value = document.getElementById('sidebar').style.display;//Get sidebar visibility
+		
+		//If sidebar is hidden
+		if (value == 'none') {
+			document.getElementById('sidebar').style.display = 'block'; //Display sidebar
+		}
+		//Else, sidebar is visible
+		else {
+			document.getElementById('sidebar').style.display = 'none'; //Hide sidebar
+		}
+		
+		
+	}
+	
+	/*
+	 * dashboard function for loading dashboard page content
+	 */
+	function dashboard() {
+		
+		//Get all incoming payments
+		xmlhttp = new XMLHttpRequest(); //Create new AJAX request object
+		
+		//Handle various callbacks from request
+		xmlhttp.onreadystatechange = function() {
+		
+			//Once request is complete
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				
+				payments = JSON.parse(xmlhttp.responseText); //Parse response
+				
+				//If there are payments
+				if (payments.length > 0) {
+					
+					//Convert parsed JSON objects into Payment objects
+					for (var i = 0; i < payments.length; i++) {
+						
+						payments[i] = new Payment(payments[i]);													//Create new Payment object from JSON
+						document.getElementById('owes').getElementsByTagName('ul')[0].innerHTML += payments[i];	//Add Payment to page
+					
+					}
+				
+				}
+				//Else, no payments found
+				else {
+					document.getElementById('owes').getElementsByTagName('ul')[0].innerHTML = 'None :)'; //Empty message
+				}
+				
+			}
+			
+		}
+		
+		xmlhttp.open('GET', server + handle + 'incoming=' + id, false);	//Specify AJAX request
+		xmlhttp.send();													//And send
 		
 	}

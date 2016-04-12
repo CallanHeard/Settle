@@ -9,6 +9,7 @@
 		<title>Dashboard | Settle</title>
 		
 		<!-- Stylesheets -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
 		<link rel="stylesheet" type="text/css" href="_css/reset.css" />
 		<link rel="stylesheet" type="text/css" href="_css/main.css" />
 		
@@ -17,20 +18,12 @@
 		<script type="text/javascript" src="_js/classes.js"></script>
 
 	</head>
-	<body onload="load(true);">
-	
-		<!-- Page top bar -->
-		<div id="topbar" class="clear">
-		
-			<a href="#">=</a>	<!-- Show nav overlay button -->
-			<h1>Dashboard</h1>	<!-- Main page title -->
-			
-		</div>
+	<body onload="load('Dashboard', true); dashboard();">
 		
 		<!-- Main dashboard overview -->
 		<div id="overview" class="clear">
 		
-			<a href="#">+</a> <!-- Create new payment -->
+			<a href="#"><i class="fa fa-plus" aria-hidden="true"></i></a> <!-- Create new payment -->
 			
 			<!-- Overview headings -->
 			<div id="totals">
@@ -52,7 +45,7 @@
 			<h4>You Owe</h4> <!-- Payment list heading -->
 			
 			<!-- List of payments -->
-			<ul><li>None :)</li></ul>
+			<ul></ul>
 			
 		</div>
 		
@@ -62,7 +55,7 @@
 			<h4>You're Owed</h4> <!-- Payment list heading -->
 			
 			<!-- List of payments -->
-			<ul><li>None :(</li></ul>
+			<ul></ul>
 			
 		</div>
 
