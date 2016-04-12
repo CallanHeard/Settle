@@ -32,7 +32,7 @@
 					user = new User(JSON.parse(xmlhttp.responseText)); //Instantiate user object from JSON response
 				}
 				
-			}
+			};
 			
 			xmlhttp.open('GET', server + handle + 'user=' + id, false);	//Specify AJAX request
 			xmlhttp.send();												//And send
@@ -142,28 +142,26 @@
 				
 				payments = JSON.parse(xmlhttp.responseText); //Parse response
 				
-				//If there are payments
-				if (payments.length > 0) {
-					
-					//Convert parsed JSON objects into Payment objects
-					for (var i = 0; i < payments.length; i++) {
-						
-						payments[i] = new Payment(payments[i]);													//Create new Payment object from JSON
-						document.getElementById('owes').getElementsByTagName('ul')[0].innerHTML += payments[i];	//Add Payment to page
-					
-					}
+				//Convert parsed JSON objects into Payment objects
+				for (var i = 0; i < payments.length; i++) {
 				
-				}
-				//Else, no payments found
-				else {
-					document.getElementById('owes').getElementsByTagName('ul')[0].innerHTML = 'None :)'; //Empty message
+					payments[i] = new Payment(payments[i]);																		//Create new Payment object from JSON
+					
+					document.getElementById(payments[i].orientation).style.display = 'block';									//Show list heading
+					document.getElementById(payments[i].orientation).getElementsByTagName('ul')[0].innerHTML += payments[i];	//Add Payment to page
+				
 				}
 				
 			}
 			
-		}
+		};
 		
-		xmlhttp.open('GET', server + handle + 'incoming=' + id, false);	//Specify AJAX request
+		xmlhttp.open('GET', server + handle + 'payments=' + id, false);	//Specify AJAX request
 		xmlhttp.send();													//And send
+		
+		//If there are no payments
+		if (document.getElementById('owes').style.display == '' && document.getElementById('owed').style.display == '') {
+			document.body.innerHTML += '<p>No payments found! Click the link above to create one, or use your PIN to join someone else\'s</p>';
+		}
 		
 	}

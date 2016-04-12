@@ -32,6 +32,7 @@
 			
 			var returnString = ''; //String for storing mark-up to be returned
 			
+			//Generate mark-up
 			returnString += '<div class="profile">\
 <img src="' + this.profile + '" alt="' + this.fullName + '\'s Profile Image" />\
 <p>' + this.fullName + '</p>\
@@ -53,6 +54,7 @@
 		
 		this.hostName	= this.firstName + ' ' + this.lastName;			//Initialise full name
 		this.profile	= server + profiles + this.hostUser + '.jpg';	//Initialise link to profile image
+		this.orientation = this.hostUser == user.id ? 'owed' : 'owes';	//Initialise orientation (incoming/outgoing)
 		
 	}
 	
@@ -61,11 +63,15 @@
 	 */
 	Payment.prototype = {
 		
+		/* Would probably be better as two separate derived classes for incoming/outgoing */
+		
 		//Override class toString method to generate mark-up
 		toString: function() {
 			
-			var returnString = ''; //String for storing mark-up to be returned
+			var o				= this.orientation == 'owes';	//Avoid repeating this statement in shorthand
+			var returnString	= '';							//String for storing mark-up to be returned
 			
+			//Generate mark-up
 			returnString += '<!-- Payment ' + this.id + ' -->\
 <li class="payment clear">\
 <a href="#" class="clear">\
@@ -73,9 +79,9 @@
 <div class="details">\
 <div class="left">\
 <p>' + this.name + '</p>\
-<p>' + this.hostName + '</p>\
+<p>' + (o ? this.hostName : 'from ' + this.contributors + ' ' + (this.contributors == 1 ? 'person' : 'people')) + '</p>\
 </div>\
-<p class="amount">' + this.amount + '</p>\
+<p class="amount ' + (o ? 'red' : 'green') + '">' + (o ? this.amount : this.total) + '</p>\
 </div>\
 </a>\
 <hr />\

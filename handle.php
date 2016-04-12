@@ -64,9 +64,10 @@
 		
 		$connection = establish_connection(); //Establish database connection
 		
-		$sql = "SELECT payment.id, payment.name, contributes.amount, payment.host_user, user.first_name, user.last_name
+		//Generate SQL - only get required columns to minimise server usage/traffic
+		$sql = "SELECT payment.id, payment.name, payment.total, payment.contributors, contributes.amount, payment.host_user, user.first_name, user.last_name
 				FROM payment INNER JOIN user ON (payment.host_user = user.id), contributes
-				WHERE user.id = {$_GET['payments']}";
+				WHERE contributes.user_id = {$_GET['payments']} AND contributes.settled = 0";
 		
 		$result = $connection->query($sql);						//And execute
 		

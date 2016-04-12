@@ -39,6 +39,21 @@
 	src:			url(../_fonts/lekton_regular.ttf);	
 }
 
+/* Generic class for 'red' */
+.red {
+	color: red;
+}
+
+/* Generic class for 'green' */
+.green {
+	color: green;
+}
+
+body {
+	font-family:	Body;
+	font-size:		16px; /* Base */
+}
+
 /* Page padding allowing for borders */
 body > * {
 	padding: 10px;
@@ -114,13 +129,14 @@ body > * {
 
 /* Payment list */
 .payment_list {
-	font-family: Body; /* Base */
+	display:		none; /* Hide unless there are payments */
+	font-family:	Body; /* Base */
 }
 
 /* Payment list headings */
 .payment_list h4 {
 	margin-bottom:	5px;
-	font-size:		16px; /*Base*/
+	font-size:		16px; /* Base */
 	font-family:	Heading;
 	font-weight:	200;
 }
@@ -157,7 +173,7 @@ body > * {
 /* Payment details */
 .payment .details {
 	margin-left:	5px;
-	padding-bottom:	5px;
+	padding-bottom:	10px;
 	width:			75%;
 }
 
@@ -191,11 +207,10 @@ body > * {
 /* Payment amount */
 .payment .details .amount {
 	float:			right;
-	margin-top:		10px;
+	margin-top:		20px;
 	width:			40%;
 	text-align:		right;
 	font-family:	Mono;
-	color:			#000000;
 }
 
 .payment .details .amount:before {
