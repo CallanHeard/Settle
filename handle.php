@@ -64,7 +64,7 @@
 		
 		$connection = establish_connection(); //Establish database connection
 		
-		//Generate SQL for outgoing payments - only get required columns to minimise server usage/traffic
+		//Generate SQL - only get required columns to minimise server usage/traffic
 		$sql = "SELECT p.id, p.name, p.total, p.contributors, c.amount, p.host_user, u.first_name, u.last_name
 				FROM payment p INNER JOIN user u ON (p.host_user = u.id), contributes c
 				WHERE c.user_id = {$_GET['payments']} AND c.payment_id = p.id AND c.settled = 0";
@@ -83,12 +83,10 @@
 			while ($row = $result->fetch_assoc()) {
 				$payments[$i++] = $row; //Add result to array
 			}
-			
-			//echo json_encode($payments); //Return results as JSON object array
 
 		}
 		
-		//Generate SQL for incoming payments - only get required columns to minimise server usage/traffic
+		//Generate SQL - only get required columns to minimise server usage/traffic
 		$sql = "SELECT p.id, p.name, p.total, p.contributors, p.host_user, u.first_name, u.last_name
 				FROM payment p, user u
 				WHERE p.host_user = {$_GET['payments']} AND u.id = {$_GET['payments']}";
@@ -136,6 +134,37 @@
 		//There should only be one
 		if ($result->num_rows == 1) {
 			echo json_encode($result->fetch_assoc()); //Return user details as JSON object
+		}
+		
+	}
+	
+	/*
+	 * Handle payment contributor list requests
+	 */
+	if (isset($_GET['contributors'])) {
+		
+		$connection = establish_connection(); //Establish database connection
+		
+		//Generate SQL - only get required columns to minimise server usage/traffic
+		$sql = "SELECT u.id, u.first_name, u.last_name, u.email, c.amount, c.settled
+				FROM user u, contributes c
+				WHERE c.payment_id = {$_GET['contributors']} AND u.id = c.user_id";
+		
+		$result = $connection->query($sql); //And execute
+		
+		//If there is some results
+		if ($result->num_rows > 0) {
+		
+			$results;	//Array for storing/returning results
+			$i = 0;		//Counter for results
+			
+			//Loop through the results
+			while ($row = $result->fetch_assoc()) {
+				$results[$i++] = $row; //Add result to array
+			}
+			
+			echo json_encode($results); //Return results as JSON object array
+			
 		}
 		
 	}

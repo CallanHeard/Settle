@@ -53,12 +53,18 @@
 			var returnString = ''; //String for storing mark-up to be returned
 			
 			//Generate mark-up
-			returnString += '<div class="user">\
+			returnString += '<div class="user clear">\
 <img src="' + this.profile + '" alt="' + this.fullName + '\'s Profile Image" />\
 <div class="details">\
-<p>' + this.fullName + '</p>\
-<p>' + this.email + '</p></div>\
-</div>';
+<p>' + this.fullName + (this.id == id ? ' (You)' : '') + '</p>\
+<p>' + this.email + '</p></div>';
+
+			//If amount is defined (ie this is a contributor user)
+			if (typeof this.amount == 'string') {
+				returnString += '<p class="amount ' + (this.settled == 1 ? 'green' : 'red') + '">' + parseFloat(Math.round((this.amount) * 100) / 100).toFixed(2) + '</p>';
+			}
+			
+			returnString += '</div>';
 
 			return returnString; //Return generated mark-up
 			
@@ -105,12 +111,10 @@
 <a href="payment.html?id=' + id + '&payment=' + this.id + '" class="clear">\
 <img src="' + this.profile + '" /> <!-- Payment host profile image -->\
 <div class="details">\
-<div class="left">\
 <p>' + this.name + '</p>\
 <p>' + (o ? this.hostName : 'from ' + this.contributors + ' ' + (this.contributors == 1 ? 'person' : 'people')) + '</p>\
 </div>\
-<p class="amount ' + (o ? 'red' : 'green') + '">' + (o ? this.amount : this.total) + '</p>\
-</div>\
+<p class="amount ' + (o ? 'red' : 'green') + '">' + parseFloat(Math.round(((o ? this.amount : this.total)) * 100) / 100).toFixed(2) + '</p>\
 </a>\
 <hr />\
 </li>';

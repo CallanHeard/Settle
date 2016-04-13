@@ -88,6 +88,14 @@
 	}
 	
 	/*
+	 * Adds back button to topbar
+	 */
+	function topbarBack() {
+		/* TODO add after nav button, not before */
+		document.getElementById('topbar').innerHTML = '<i onclick="window.history.back();" class="fa fa-chevron-left" aria-hidden="true"></i>' + document.getElementById('topbar').innerHTML;
+	}
+	
+	/*
 	 * sidebar function for adding navigational sidebar to page
 	 */
 	function sidebar(selected) {
@@ -161,7 +169,7 @@
 				//Convert parsed JSON objects into Payment objects
 				for (var i in payments) {
 				
-					payments[i] = new Payment(payments[i]);																		//Create new Payment object from JSON
+					payments[i] = new Payment(payments[i]); //Create new Payment object from JSON
 					
 					document.getElementById(payments[i].orientation).style.display = 'block';									//Show list heading
 					document.getElementById(payments[i].orientation).getElementsByTagName('ul')[0].innerHTML += payments[i];	//Add Payment to page
@@ -215,26 +223,28 @@
 	 */
 	function payment() {
 		
+		topbarBack(); //Add back button
+		
 		var payment_id = getParam('payment'); //Get payment ID
 
 		//If payment ID is present
 		if (payment_id != null && payment_id != '') {
 		
 			//Get single payment
-			xmlhttp = new XMLHttpRequest(); //Create new AJAX request object
+			payment_request = new XMLHttpRequest(); //Create new AJAX request object
 			
 			//Handle various callbacks from request
-			xmlhttp.onreadystatechange = function() {
+			payment_request.onreadystatechange = function() {
 			
 				//Once request is complete
-				if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				if (payment_request.readyState == 4 && payment_request.status == 200) {
 					
-					var payment = JSON.parse(xmlhttp.responseText); //Parse response
+					var payment = JSON.parse(payment_request.responseText); //Parse response
 					
 					//Parse response again to create host user
-					var host = JSON.parse(xmlhttp.responseText);	//(Little bit convoluted but really helpful)
-					host.id = payment.host_user;					//Update host id before initialising
-					host = new User(host);							//Initialise host as User object
+					var host = JSON.parse(payment_request.responseText);	//(Little bit convoluted but really helpful)
+					host.id = payment.host_user;							//Update host id before initialising
+					host = new User(host);									//Initialise host as User object
 					
 					//Load page content
 					document.title = payment.name + ' ' + document.title;										//Update page title
@@ -242,14 +252,42 @@
 					
 					document.getElementById('total_total').innerHTML = payment.total; //Update payment total heading value
 					
-					document.getElementById('details').innerHTML = host;
+					document.getElementById('details').innerHTML = host;									//Add host details to details section
+					document.getElementById('details').innerHTML += '<p>' + payment.description + '</p>';	//Add payment description to details section
 					
 				}
 				
 			};
 			
-			xmlhttp.open('GET', server + handle + 'payment=' + payment_id, false);	//Specify AJAX request
-			xmlhttp.send();															//And send
+			payment_request.open('GET', server + handle + 'payment=' + payment_id, false);	//Specify AJAX request
+			payment_request.send();															//And send
+			
+			//Get payment contributors
+			members_request = new XMLHttpRequest(); //Create new AJAX request object
+			
+			//Handle various callbacks from request
+			members_request.onreadystatechange = function() {
+			
+				//Once request is complete
+				if (members_request.readyState == 4 && members_request.status == 200) {
+					
+					members = JSON.parse(members_request.responseText); //Parse response
+
+					//Convert parsed JSON objects into User objects
+					for (var i in members) {
+					
+						members[i] = new User(members[i]); //Create new User object from JSON
+						
+						document.getElementById('members').innerHTML += '<li>' + members[i] + '<hr /></li>'; //Add contributor to list on page
+						
+					}
+					
+				}
+				
+			};
+			
+			members_request.open('GET', server + handle + 'contributors=' + payment_id, false);	//Specify AJAX request
+			members_request.send();																//And send
 			
 		}
 		//Else, TODO handle error
