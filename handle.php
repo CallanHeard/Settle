@@ -65,9 +65,9 @@
 		$connection = establish_connection(); //Establish database connection
 		
 		//Generate SQL for outgoing payments - only get required columns to minimise server usage/traffic
-		$sql = "SELECT payment.id, payment.name, payment.total, payment.contributors, contributes.amount, payment.host_user, user.first_name, user.last_name
-				FROM payment INNER JOIN user ON (payment.host_user = user.id), contributes
-				WHERE contributes.user_id = {$_GET['payments']} AND contributes.payment_id = payment.id AND contributes.settled = 0";
+		$sql = "SELECT p.id, p.name, p.total, p.contributors, c.amount, p.host_user, u.first_name, u.last_name
+				FROM payment p INNER JOIN user u ON (p.host_user = u.id), contributes c
+				WHERE c.user_id = {$_GET['payments']} AND c.payment_id = p.id AND c.settled = 0";
 		
 		$result = $connection->query($sql); //And execute
 		
@@ -89,9 +89,9 @@
 		}
 		
 		//Generate SQL for incoming payments - only get required columns to minimise server usage/traffic
-		$sql = "SELECT payment.id, payment.name, payment.total, payment.contributors, payment.host_user, user.first_name, user.last_name
-				FROM payment, user
-				WHERE payment.host_user = {$_GET['payments']} AND user.id = {$_GET['payments']}";
+		$sql = "SELECT p.id, p.name, p.total, p.contributors, p.host_user, u.first_name, u.last_name
+				FROM payment p, user u
+				WHERE p.host_user = {$_GET['payments']} AND u.id = {$_GET['payments']}";
 				
 		$result = $connection->query($sql); //And execute
 		
@@ -116,5 +116,26 @@
 		}
 		
 		$connection->close(); //Close database connection
+		
+	}
+	
+	/*
+	 * Handle payment requests
+	 */
+	if (isset($_GET['payment'])) {
+		
+		$connection = establish_connection(); //Establish database connection
+		
+		//Generate SQL - only get required columns to minimise server usage/traffic
+		$sql = "SELECT p.name, p.description, p.total, p.type, p.host_user, u.email, u.first_name, u.last_name
+				FROM payment p, user u
+				WHERE p.id = {$_GET['payment']} AND u.id = p.host_user";
+				
+		$result = $connection->query($sql); //And execute
+		
+		//There should only be one
+		if ($result->num_rows == 1) {
+			echo json_encode($result->fetch_assoc()); //Return user details as JSON object
+		}
 		
 	}

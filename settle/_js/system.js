@@ -4,14 +4,15 @@
 * Purpose: settle app many system logic/scripts
 */
 
-	var server = 'http://localhost/csc3122/';	//Back-end server location
-	var handle = 'handle.php?';					//Handler file name
+	var server		= 'http://localhost/csc3122/';	//Back-end server location
+	var handle		= 'handle.php?';				//Handler file name
+	var profiles	= 'profiles/';					//Profile images directory name
 	
 	var id;			//Current user ID
 	var user;		//Current user
 	var payments;	//Current user's payments
 	
-	var dashHeading = 2; //Starting dashboard heading
+	var currentHeading = 0; //Starting page overview heading
 
 	/*
 	 * load function for retrieving page content from database
@@ -46,7 +47,7 @@
 			
 			//If page required sidebar
 			if (nav) {
-				sidebar(); //Add sidebar to page
+				sidebar(nav); //Add sidebar to page
 			}
 			
 		}
@@ -89,16 +90,16 @@
 	/*
 	 * sidebar function for adding navigational sidebar to page
 	 */
-	function sidebar() {
+	function sidebar(selected) {
 
 		//Generate markup
 		var markup = '<!-- Page navigation -->\
 <div id="sidebar" style="display: none">\
 <div class="overlay" onclick="toggleNav();"></div>\
 <ul>\
-<li>' + user + '</li>\
-<li><a href="#">Dashboard<i class="fa fa-home" aria-hidden="true"></i></a></li>\
-<li><a href="#">Notification<i class="fa fa-flag" aria-hidden="true"></i></a></li>\
+<li>' + user.displayProfile() + '</li>\
+<li><a href="dashboard.html?id=' + id + '"' + (selected == 'dashboard' ? ' class="selected"' : '') + '>Dashboard<i class="fa fa-home" aria-hidden="true"></i></a></li>\
+<li><a href="#">Notifications<i class="fa fa-flag" aria-hidden="true"></i></a></li>\
 <li><a href="#">New Payment<i class="fa fa-plus" aria-hidden="true"></i></a></li>\
 <li><a href="#">Account<i class="fa fa-wrench" aria-hidden="true"></i></a></li>\
 </ul>\
@@ -129,11 +130,24 @@
 	}
 	
 	/*
+	 * toggleHeading function for switching between displayed page overview headings
+	 */
+	function toggleHeading(heading) {
+		
+		var headings = document.getElementById('totals').getElementsByTagName('div'); //Get page overview headings
+		
+		heading.removeAttribute('class');													//Hide previous heading
+		currentHeading = currentHeading == headings.length - 1 ? 0 : currentHeading + 1;	//Loop pointer through overview headings														//Loop through dashboard heading numbers
+		headings[currentHeading].setAttribute('class', 'selected');							//Show new dashboard heading
+		
+	}
+	
+	/*
 	 * dashboard function for loading dashboard page content
 	 */
 	function dashboard() {
 		
-		//Get all incoming payments
+		//Get all user payments
 		xmlhttp = new XMLHttpRequest(); //Create new AJAX request object
 		
 		//Handle various callbacks from request
@@ -185,7 +199,6 @@
 		//Set balance heading/total
 		document.getElementById('balance_total').innerHTML = parseFloat(Math.round(Math.abs(balance) * 100) / 100).toFixed(2);						//Set balance value, formatted two decimal places
 		document.getElementById('balance_total').setAttribute('class', 'selected' + (balance < 0 ? ' red' : '') + (balance > 0 ? ' green' : ''));	//Set balance colour
-		document.getElementById('balance_heading').setAttribute('class', 'selected');																//Show balance heading
 		
 		document.getElementById('owes_total').innerHTML = parseFloat(Math.round(Math.abs(owes) * 100) / 100).toFixed(2);	//Set owes value, formatted two decimal places
 		document.getElementById('owes_total').setAttribute('class', (owes > 0 ? 'red' : 'green'));							//Set owes colour
@@ -193,15 +206,55 @@
 		document.getElementById('owed_total').innerHTML = parseFloat(Math.round(Math.abs(owed) * 100) / 100).toFixed(2);	//Set owed value, formatted two decimal places
 		if (owed > 0) document.getElementById('owed_total').setAttribute('class', 'green');									//Set owed colour
 		
+		document.getElementById('totals').getElementsByTagName('div')[currentHeading].setAttribute('class', 'selected'); //Show starting page overview heading
+		
 	}
 	
 	/*
-	 * toggleDashHeading function for switching between displayed dashboard overview heading
+	 * payment function for loading view payment page content
 	 */
-	function toggleDashHeading(heading) {
+	function payment() {
 		
-		heading.removeAttribute('class');																				//Hide previous heading
-		dashHeading = dashHeading == 2 ? 0 : dashHeading + 1;															//Loop through dashboard heading numbers
-		document.getElementById('totals').getElementsByTagName('div')[dashHeading].setAttribute('class', 'selected');	//Show new dashboard heading
+		var payment_id = getParam('payment'); //Get payment ID
+
+		//If payment ID is present
+		if (payment_id != null && payment_id != '') {
 		
+			//Get single payment
+			xmlhttp = new XMLHttpRequest(); //Create new AJAX request object
+			
+			//Handle various callbacks from request
+			xmlhttp.onreadystatechange = function() {
+			
+				//Once request is complete
+				if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+					
+					var payment = JSON.parse(xmlhttp.responseText); //Parse response
+					
+					//Parse response again to create host user
+					var host = JSON.parse(xmlhttp.responseText);	//(Little bit convoluted but really helpful)
+					host.id = payment.host_user;					//Update host id before initialising
+					host = new User(host);							//Initialise host as User object
+					
+					//Load page content
+					document.title = payment.name + ' ' + document.title;										//Update page title
+					document.getElementById('topbar').getElementsByTagName('h1')[0].innerHTML = payment.name;	//Update page heading
+					
+					document.getElementById('total_total').innerHTML = payment.total; //Update payment total heading value
+					
+					document.getElementById('details').innerHTML = host;
+					
+				}
+				
+			};
+			
+			xmlhttp.open('GET', server + handle + 'payment=' + payment_id, false);	//Specify AJAX request
+			xmlhttp.send();															//And send
+			
+		}
+		//Else, TODO handle error
+		else {
+			window.location = 'dashboard.html?id=' + id; //Return to dashboard
+		}
+	
 	}

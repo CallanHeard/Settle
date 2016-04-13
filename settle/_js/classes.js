@@ -16,7 +16,7 @@
 		for (var property in json) this[sanitise(property)] = json[property]; //Initialise object from JSON
 		
 		this.fullName	= this.firstName + ' ' + this.lastName; //Initialise full name
-		this.profile	= server + profiles + this.id + '.jpg'; //Initialise link to profile image
+		this.profile	= server + profiles + this.id + '.jpg'; //Initialise link to profile image /* TODO would probably be better as db field */
 		
 	}
 	
@@ -26,9 +26,11 @@
 	User.prototype = {
 		
 		/* TODO pin and score */
-		
-		//Override class toString method to generate mark-up
-		toString: function() {
+		 
+		/*
+		 * User displayProfile method for displaying user details
+		 */
+		displayProfile: function() {
 			
 			var returnString = ''; //String for storing mark-up to be returned
 			
@@ -39,6 +41,25 @@
 <p>' + this.email + '</p>\
 <p>Score: <span>0</span></p></div>';
 			
+			return returnString; //Return generated mark-up
+			
+		},
+		
+		/*
+		 * Override class toString method to generate mark-up for quick display (less info than profile)
+		 */
+		toString: function() {
+			
+			var returnString = ''; //String for storing mark-up to be returned
+			
+			//Generate mark-up
+			returnString += '<div class="user">\
+<img src="' + this.profile + '" alt="' + this.fullName + '\'s Profile Image" />\
+<div class="details">\
+<p>' + this.fullName + '</p>\
+<p>' + this.email + '</p></div>\
+</div>';
+
 			return returnString; //Return generated mark-up
 			
 		}
@@ -70,7 +91,9 @@
 		
 		/* Would probably be better as two separate derived classes for incoming/outgoing */
 		
-		//Override class toString method to generate mark-up
+		/*
+		 * Override class toString method to generate mark-up
+		 */
 		toString: function() {
 			
 			var o				= this.orientation == 'owes';	//Avoid repeating this statement in shorthand
@@ -79,7 +102,7 @@
 			//Generate mark-up
 			returnString += '<!-- Payment ' + this.id + ' -->\
 <li class="payment clear">\
-<a href="#" class="clear">\
+<a href="payment.html?id=' + id + '&payment=' + this.id + '" class="clear">\
 <img src="' + this.profile + '" /> <!-- Payment host profile image -->\
 <div class="details">\
 <div class="left">\
