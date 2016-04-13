@@ -70,9 +70,10 @@ body > * {
 }
 
 /* Top bar links */
-#topbar a {
-	color:		#000000;
-	opacity:	0.8;
+#topbar i {
+	margin-left:	-10px;
+	padding:		10px; /* Make clickable size slightly larger */
+	opacity:		0.8;
 }
 
 /* Page title */
@@ -97,33 +98,43 @@ body > * {
 	color:		#BBBBBB;
 }
 
-/* All total value headings */
+/* All total value headings together */
 #overview #totals {
 	float: right;
 }
 
+/* Each total value heading */
+#overview #totals div {
+	display: none; /* Only show selected */
+}
+
+/* Selected total value heading */
+#overview #totals div.selected {
+	display: block;
+}
+
 /* Total changing headings */
 #overview h2 {
-	display:		none;	/* Only show selected */
 	text-align:		right;
 	font-size:		12px;	/* Small */
 	text-transform:	uppercase;
 	font-family:	Heading;
 }
 
-/* Selected total value heading */
-#overview h2.selected {
-	display: block;
-}
-
 /* Total value displayed */
-#overview #total {
-	font-size:		48px; /* Large */
+#overview h3 {
+	text-align:		right;
+	font-size:		48px;	/* Large */
 	font-family:	Heading;
 	font-weight:	200;
 }
 
-#overview #total:before {
+/* Selected total value */
+#overview h3.selected {
+	display: block;
+}
+
+#overview h3:before {
 	content: '\00a3'; /* Pound sign before value */
 }
 
@@ -147,9 +158,10 @@ body > * {
 	margin-bottom:	0;
 	margin-right:	-10px;
 	border:			0;
-	border-bottom:	1px solid #DDDDDD;
-	height:			0;
-	width:			75%;
+	/* border-bottom:	1px solid #DDDDDD; */
+	height:			1px;
+	width:			90%;
+	background-image: linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1));
 }
 
 /* Individual payment */
@@ -260,7 +272,8 @@ body > * {
 
 /* Menu icons */
 #sidebar ul li a i {
-	float: right;
+	float:		right;
+	opacity:	0.8;
 }
 
 /* User profile in sidebar */

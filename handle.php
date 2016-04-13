@@ -64,26 +64,55 @@
 		
 		$connection = establish_connection(); //Establish database connection
 		
-		//Generate SQL - only get required columns to minimise server usage/traffic
+		//Generate SQL for outgoing payments - only get required columns to minimise server usage/traffic
 		$sql = "SELECT payment.id, payment.name, payment.total, payment.contributors, contributes.amount, payment.host_user, user.first_name, user.last_name
 				FROM payment INNER JOIN user ON (payment.host_user = user.id), contributes
-				WHERE contributes.user_id = {$_GET['payments']} AND contributes.settled = 0";
+				WHERE contributes.user_id = {$_GET['payments']} AND contributes.payment_id = payment.id AND contributes.settled = 0";
 		
-		$result = $connection->query($sql);						//And execute
+		$result = $connection->query($sql); //And execute
 		
-		//If there is some payments
+		$payments;	//Array for storing/returning results
+		$i = 0;		//Counter for results
+		
+		//If there is some results
 		if ($result->num_rows > 0) {
 
-			$i = 0;					//Counter for results
-			$payments = Array();	//Array to store/encode results
+			$payments = Array();	//Initialise results array
 			
 			//Loop through the results
 			while ($row = $result->fetch_assoc()) {
 				$payments[$i++] = $row; //Add result to array
 			}
 			
-			echo json_encode($payments); //Return results as JSON object array
+			//echo json_encode($payments); //Return results as JSON object array
 
+		}
+		
+		//Generate SQL for incoming payments - only get required columns to minimise server usage/traffic
+		$sql = "SELECT payment.id, payment.name, payment.total, payment.contributors, payment.host_user, user.first_name, user.last_name
+				FROM payment, user
+				WHERE payment.host_user = {$_GET['payments']} AND user.id = {$_GET['payments']}";
+				
+		$result = $connection->query($sql); //And execute
+		
+		//If there is some results
+		if ($result->num_rows > 0) {
+			
+			//If results array has not been initialised (no outgoing payments)
+			if (!isset($payments)) {
+				$payments = Array(); //Initialise results array
+			}
+			
+			//Loop through the results
+			while ($row = $result->fetch_assoc()) {
+				$payments[$i++] = $row; //Add result to array
+			}
+			
+		}
+		
+		//If there are results
+		if(isset($payments)) {
+			echo json_encode($payments); //Return results as JSON object array
 		}
 		
 		$connection->close(); //Close database connection

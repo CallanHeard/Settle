@@ -52,6 +52,11 @@
 		
 		for (var property in json) this[sanitise(property)] = json[property]; //Initialise object from JSON
 		
+		if (this.amount == 'undefined') this.amount = 0; //Incoming payments will have no contribution amount
+		
+		this.total = parseFloat(this.total);	//Convert payment total to float
+		this.amount = parseFloat(this.amount);	//Convert payment amount to float
+		
 		this.hostName	= this.firstName + ' ' + this.lastName;			//Initialise full name
 		this.profile	= server + profiles + this.hostUser + '.jpg';	//Initialise link to profile image
 		this.orientation = this.hostUser == user.id ? 'owed' : 'owes';	//Initialise orientation (incoming/outgoing)

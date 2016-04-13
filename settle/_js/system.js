@@ -10,6 +10,8 @@
 	var id;			//Current user ID
 	var user;		//Current user
 	var payments;	//Current user's payments
+	
+	var dashHeading = 2; //Starting dashboard heading
 
 	/*
 	 * load function for retrieving page content from database
@@ -77,7 +79,7 @@
 		//Generate markup
 		var markup = '<!-- Page top bar -->\
 <div id="topbar" class="clear">\
-<a href="#" onclick="toggleNav();"><i class="fa fa-bars" aria-hidden="true"></i></a> <!-- Show nav overlay button -->\
+<i onclick="toggleNav();" class="fa fa-bars" aria-hidden="true"></i> <!-- Show nav overlay button -->\
 <h1>' + title + '</h1> <!-- Main page title --></div>';
 		
 		document.body.innerHTML = markup + document.body.innerHTML; //Append markup to page
@@ -143,7 +145,7 @@
 				payments = JSON.parse(xmlhttp.responseText); //Parse response
 				
 				//Convert parsed JSON objects into Payment objects
-				for (var i = 0; i < payments.length; i++) {
+				for (var i in payments) {
 				
 					payments[i] = new Payment(payments[i]);																		//Create new Payment object from JSON
 					
@@ -163,5 +165,43 @@
 		if (document.getElementById('owes').style.display == '' && document.getElementById('owed').style.display == '') {
 			document.body.innerHTML += '<p>No payments found! Click the link above to create one, or use your PIN to join someone else\'s</p>';
 		}
+		
+		//Calculate page overview heading totals
+		var balance	= 0;
+		var owes	= 0;
+		var owed	= 0;
+		
+		//For each payment in payments
+		for (var i in payments) {
+			
+			balance	+= payments[i].orientation == 'owes' ? -payments[i].amount : payments[i].total;	//Update balance
+			owes	+= payments[i].orientation == 'owes' ? payments[i].amount : 0;					//Update owes
+			owed	+= payments[i].orientation == 'owed' ? payments[i].total : 0;					//Update owed
+			
+		}
+		
+		/* TODO responsive total value size */
+		
+		//Set balance heading/total
+		document.getElementById('balance_total').innerHTML = parseFloat(Math.round(Math.abs(balance) * 100) / 100).toFixed(2);						//Set balance value, formatted two decimal places
+		document.getElementById('balance_total').setAttribute('class', 'selected' + (balance < 0 ? ' red' : '') + (balance > 0 ? ' green' : ''));	//Set balance colour
+		document.getElementById('balance_heading').setAttribute('class', 'selected');																//Show balance heading
+		
+		document.getElementById('owes_total').innerHTML = parseFloat(Math.round(Math.abs(owes) * 100) / 100).toFixed(2);	//Set owes value, formatted two decimal places
+		document.getElementById('owes_total').setAttribute('class', (owes > 0 ? 'red' : 'green'));							//Set owes colour
+		
+		document.getElementById('owed_total').innerHTML = parseFloat(Math.round(Math.abs(owed) * 100) / 100).toFixed(2);	//Set owed value, formatted two decimal places
+		if (owed > 0) document.getElementById('owed_total').setAttribute('class', 'green');									//Set owed colour
+		
+	}
+	
+	/*
+	 * toggleDashHeading function for switching between displayed dashboard overview heading
+	 */
+	function toggleDashHeading(heading) {
+		
+		heading.removeAttribute('class');																				//Hide previous heading
+		dashHeading = dashHeading == 2 ? 0 : dashHeading + 1;															//Loop through dashboard heading numbers
+		document.getElementById('totals').getElementsByTagName('div')[dashHeading].setAttribute('class', 'selected');	//Show new dashboard heading
 		
 	}
