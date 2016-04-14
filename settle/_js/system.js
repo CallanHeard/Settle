@@ -122,16 +122,70 @@
 	 */
 	function toggleNav() {
 		
-		/* TODO Slide plugin */
-		var value = document.getElementById('sidebar').style.display;//Get sidebar visibility
+		var value = document.getElementById('sidebar').style.display; //Get sidebar visibility
 		
 		//If sidebar is hidden
 		if (value == 'none') {
-			document.getElementById('sidebar').style.display = 'block'; //Display sidebar
+			
+			document.getElementById('sidebar').style.display = 'block'; //Display whole sidebar
+			
+			var side = document.getElementById('sidebar').getElementsByTagName('ul')[0];	//Get sidebar menu list element
+			var left = -76;																	//Starting left position of menu
+			
+			//Set interval (1ms) for menu slider function
+			var interval = setInterval(
+				
+				//Menu slider function
+				function() {
+					
+					//If slider complete
+					if (left == 0) {
+						clearInterval(interval); //Clear interval
+					}
+					//Else, slide menu
+					else {
+						
+						left = left + 1;					//Increment left position
+						side.style.marginLeft = left + '%';	//Set new left position of menu
+						
+					}
+					
+				},
+				
+			1);
+			
 		}
 		//Else, sidebar is visible
 		else {
-			document.getElementById('sidebar').style.display = 'none'; //Hide sidebar
+			
+			var side = document.getElementById('sidebar').getElementsByTagName('ul')[0];	//Get sidebar menu list element
+			var left = 0;																	//Starting left position of menu
+			
+			//Set interval (1ms) for menu slider function
+			var interval = setInterval(
+				
+				//Menu slider function
+				function() {
+					
+					//If slider complete
+					if (left == -75) {
+						
+						document.getElementById('sidebar').style.display = 'none';	//Hide sidebar
+						clearInterval(interval);									//Clear interval
+						
+					}
+					//Else, slide menu
+					else {
+						
+						left = left - 1;					//Decrement left position
+						side.style.marginLeft = left + '%';	//Set new left position of menu
+						
+					}
+					
+				},
+				
+			1);
+			
 		}
 		
 		
@@ -272,7 +326,11 @@
 				if (members_request.readyState == 4 && members_request.status == 200) {
 					
 					members = JSON.parse(members_request.responseText); //Parse response
-
+	
+					//Calculate page overview heading totals
+					var remaining	= 0;
+					var paid		= 0;
+	
 					//Convert parsed JSON objects into User objects
 					for (var i in members) {
 					
@@ -280,7 +338,21 @@
 						
 						document.getElementById('members').innerHTML += '<li>' + members[i] + '<hr /></li>'; //Add contributor to list on page
 						
+						//If payment is paid
+						if (members[i].settled == 1) {
+							paid += members[i].amount; //Add amount to total paid
+						}
+						//Else payment not paid
+						else {
+							remaining += members[i].amount; //Add amount to total remaining
+						}
+						
 					}
+					
+					document.getElementById('paid_total').innerHTML = parseFloat(Math.round(Math.abs(paid) * 100) / 100).toFixed(2);	//Set paid value, formatted two decimal places
+					document.getElementById('paid_total').setAttribute('class', (paid > 0 ? 'green' : 'red'));							//Set owes colour
+					
+					document.getElementById('remaining_total').innerHTML = parseFloat(Math.round(Math.abs(remaining) * 100) / 100).toFixed(2); //Set remaining value, formatted two decimal places
 					
 				}
 				

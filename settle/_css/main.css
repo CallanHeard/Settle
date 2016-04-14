@@ -103,6 +103,7 @@ body > * {
 
 /* Contents of sidebar */
 #sidebar ul {
+	margin-left:	-75%;	/* Start at left of screen */
 	position:		absolute;
 	top:			0;
 	left:			0;
@@ -296,6 +297,11 @@ body > * {
 	overflow:		hidden;
 	text-overflow:	ellipsis;
 	color:			#000000;
+}
+
+/* Payment link click effect */
+.payment a:active .details p {
+	color: #3366BB;
 }
 
 /* Slightly vary detail font styles/sizes */

@@ -18,6 +18,11 @@
 		this.fullName	= this.firstName + ' ' + this.lastName; //Initialise full name
 		this.profile	= server + profiles + this.id + '.jpg'; //Initialise link to profile image /* TODO would probably be better as db field */
 		
+		//If amount is defined (ie this is a contributor user)
+		if (typeof this.amount == 'string') {
+			this.amount = parseFloat(this.amount); //Convert amount to float
+		}
+		
 	}
 	
 	/*
@@ -60,8 +65,8 @@
 <p>' + this.email + '</p></div>';
 
 			//If amount is defined (ie this is a contributor user)
-			if (typeof this.amount == 'string') {
-				returnString += '<p class="amount ' + (this.settled == 1 ? 'green' : 'red') + '">' + parseFloat(Math.round((this.amount) * 100) / 100).toFixed(2) + '</p>';
+			if (typeof this.amount !== 'undefined') {
+				returnString += '<p class="amount ' + (this.settled == 1 ? 'green' : 'red') + '">' + this.amount + '</p>';
 			}
 			
 			returnString += '</div>';
