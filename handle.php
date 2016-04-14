@@ -14,7 +14,11 @@
 	$username		= 'root';
 	$password		= '';
 	$database_name	= 'settle';
+ 
+	date_default_timezone_set("Europe/London"); //Set default timezone
 
+	//echo substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 5)), 0, 5);
+	
 	/*
 	 * establish_connection function for establishing a connection to the database
 	 */
@@ -179,19 +183,51 @@
 	if (isset($_GET['paid']) && isset($_GET['contributor'])) {
 		
 		$connection = establish_connection(); //Establish database connection
+	
+		//Generate SQL for required values
+		$sql = "SELECT u.score, p.date, (SELECT COUNT(*) FROM contributes c WHERE c.user_id = {$_GET['contributor']}) AS 'count'
+				FROM user u, payment p
+				WHERE u.id = {$_GET['contributor']} AND p.id = {$_GET['paid']}";
+		
+		$result = $connection->query($sql); //Retrieve required values
 
-		//Generate SQL for updates
-		$sql1 = "UPDATE contributes c
-				SET c.settled = 1
-				WHERE c.payment_id = {$_GET['paid']} AND c.user_id = {$_GET['contributor']}";
-				
-		$sql2 = "UPDATE payment p INNER JOIN contributes c ON (c.payment_id = p.id)
-				SET p.total = p.total - c.amount, p.contributors = p.contributors - 1
-				WHERE p.id = {$_GET['paid']} AND c.user_id = {$_GET['contributor']}";
+		//There should only be one
+		if ($result->num_rows == 1) {
+		
+			$values = $result->fetch_assoc(); //Get result values
 
-		/* TODO very bad - should be transaction handling rollbacks etc */
-		$connection->query($sql1);
-		$connection->query($sql2);
+			$time = time() - $values['date']; //Calculate time since creation time
+
+			/* TODO make this better: incorporate amount paid back? */
+			//Calculate score based on time
+			$score = $values['score'];
+			
+			if ($time < 3600)			$score += 10;	//If time taken to pay is less than an hour
+			else if ($time < 43200)		$score += 8;	//If time taken to pay is less than 12 hours
+			else if ($time < 86400)		$score += 5;	//If time taken to pay is less than 24 hours
+			else if ($time < 604800)	$score += 2;	//If time taken to pay is less than a week
+			else if ($time < 2592000)	$score += 1;	//If time taken to pay is less than 30 days
+			else if ($time < 5184000)	$score += 0.5;	//If time taken to pay is less than 60 days
+
+			$percentage = $score / ($values['count'] * 10) * 100; //Calculate user score percentage of maximum possible score
+			
+			//Generate SQL for updates
+			$sql1 = "UPDATE contributes c
+					SET c.settled = 1
+					WHERE c.payment_id = {$_GET['paid']} AND c.user_id = {$_GET['contributor']}";
+					
+			$sql2 = "UPDATE payment p INNER JOIN contributes c ON (c.payment_id = p.id)
+					SET p.total = p.total - c.amount, p.contributors = p.contributors - 1
+					WHERE p.id = {$_GET['paid']} AND c.user_id = {$_GET['contributor']}";
+					
+			$sql3 = "UPDATE user SET score = {$score}, percentage = {$percentage} WHERE id = {$_GET['contributor']}";
+
+			/* TODO very bad - should be transaction handling rollbacks etc */
+			$connection->query($sql1);
+			$connection->query($sql2);
+			$connection->query($sql3);
+			
+		}
 		
 		$connection->close(); //Close database connection
 		

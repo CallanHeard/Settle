@@ -115,7 +115,7 @@
 <li>' + user.displayProfile() + '</li>\
 <li><a href="dashboard.html?id=' + id + '"' + (selected == 'dashboard' ? ' class="selected"' : '') + '>Dashboard<i class="fa fa-home" aria-hidden="true"></i></a></li>\
 <li><a href="#">Notifications<i class="fa fa-flag" aria-hidden="true"></i></a></li>\
-<li><a href="#">New Payment<i class="fa fa-plus" aria-hidden="true"></i></a></li>\
+<li><a href="create_payment.html?id=' + id + '"' + (selected == 'payment' ? ' class="selected"' : '') + '>New Payment<i class="fa fa-plus" aria-hidden="true"></i></a></li>\
 <li><a href="#">Account<i class="fa fa-wrench" aria-hidden="true"></i></a></li>\
 </ul>\
 </div>';
@@ -249,6 +249,9 @@
 		xmlhttp.open('GET', server + handle + 'payments=' + id, false);	//Specify AJAX request
 		xmlhttp.send();													//And send
 		
+		//Update new payment link with user ID
+		document.getElementById('overview').getElementsByTagName('a')[0].href = document.getElementById('overview').getElementsByTagName('a')[0].href + '?id=' + id;
+		
 		//If there are no payments
 		if (document.getElementById('owes').style.display == '' && document.getElementById('owed').style.display == '') {
 			document.body.innerHTML += '<p>No payments found! Click the plus button above to create one, or use your PIN to join someone else\'s</p>';
@@ -321,7 +324,7 @@
 					document.getElementById('topbar').getElementsByTagName('h1')[0].innerHTML = payment.name;	//Update page heading
 					
 					//Generate appropriate overview link for incoming/outgoing payment (very long!)
-					var overviewLink = payment.host_user == id ? '<a href="javascript: ' + (complete ? 'alert(\'Payment Complete!\')' : 'checkOff(\'on\')') + ';"' + (complete ? ' style="color: ' + green + '"' : '') + '><i class="fa fa-check-square-o" aria-hidden="true"></i></a>' : '<a href="javascript: notify();"><i class="fa fa-bell-o" aria-hidden="true"></i></a>';
+					var overviewLink = payment.host_user == id ? '<a href="javascript: ' + (complete ? 'alert(\'Payment Complete!\')' : 'checkOff(\'on\')') + ';"' + (complete ? ' style="color: ' + green + '"' : '') + '><i class="fa fa-check-square-o" aria-hidden="true"></i></a>' : '<a href="javascript: notify();" style="font-size: 40px;"><i class="fa fa-bell-o" aria-hidden="true"></i></a>';
 					document.getElementById('overview').innerHTML = overviewLink + document.getElementById('overview').innerHTML;	//Add link to overview section
 					
 					document.getElementById('details').innerHTML = host;									//Add host details to details section
@@ -452,7 +455,7 @@
 		if (checkOffSet == 'on') {
 			
 			//Confirm action
-			if (confirm('Confirm ' + name + ' has paid you? (This is irreversible)')) {
+			if (confirm('Confirm ' + name + ' has paid you?')) {
 				
 				//Handle user paid
 				xmlhttp = new XMLHttpRequest(); //Create new AJAX request object

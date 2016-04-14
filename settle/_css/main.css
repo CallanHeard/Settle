@@ -172,23 +172,34 @@ body > * {
 }
 
 /* Bold name */
-.profile p:nth-child(2) {
+.profile p:nth-child(3) {
 	font-weight: bold;
 }
 
 /* Score */
-.profile p:nth-child(4) {
+.profile p:nth-child(5) {
 	margin-top:		10px;
-	font-weight:	bold;
 }
 
 /* Score value */
-.profile p:nth-child(4) span {
-	font-weight: normal;
+.profile p:nth-child(5) span {
+	font-size:	16px;
+	font-weight: bold;
+	font-family: Mono;
 }
 
-.profile p:nth-child(4) span:after {
+.profile p:nth-child(5) span:after {
 	content: '%'; /* Percent sign after value */
+}
+
+/* Profile PIN number */
+.profile .pin {
+	float: right;
+	margin-top: 10px;
+	margin-right: 25px;
+	font-size: 40px;
+	font-family: Mono;
+	text-transform: uppercase;
 }
 
 /* Page overview */

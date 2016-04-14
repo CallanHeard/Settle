@@ -41,10 +41,11 @@
 			
 			//Generate mark-up
 			returnString += '<div class="profile">\
+<div class="pin">' + this.pin + '</div>\
 <img src="' + this.profile + '" alt="' + this.fullName + '\'s Profile Image" />\
 <p>' + this.fullName + '</p>\
 <p>' + this.email + '</p>\
-<p>Score: <span>0</span></p></div>';
+<p>Your Score: <span' + (this.percentage < 70 ? ' class="red"' : ' class="green"') + '>' + this.percentage + '</span></p></div>';
 			
 			return returnString; //Return generated mark-up
 			
