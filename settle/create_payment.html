@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+	<head>
+
+		<!-- Page info -->
+		<meta charset="utf-8" />
+		<meta name="author" content="Callan Heard (c.j.heard@ncl.ac.uk)" />
+		<meta name="description" content="NCL CSC3122: Mobile Computer Systems Development, Portfolio Part 2 - settle app create payment page" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>New Payment | Settle</title> <!-- Dynamic page title -->
+		
+		<!-- Stylesheets -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="_css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="_css/main.css" />
+		
+		<!-- Scripts -->
+		<script type="text/javascript" src="_js/system.js"></script>
+		<script type="text/javascript" src="_js/classes.js"></script>
+
+	</head>
+	<body onload="load('New Payment', true); createPayment();">
+	
+		<!-- Form for creating a new payment -->
+		<form method="post">
+			
+			<input type="text" placeholder="Name" maxlength="25" /> <!-- Payment name -->
+			
+			<input type="text" placeholder="Description (Optional)" maxlength="100" /><!-- Payment description -->
+			
+			<!-- Payment amount fieldset -->
+			<fieldset>
+			
+				<legend>Amount</legend>
+				
+				<label for="pounds">&#163 </label>
+				<input name="pounds" type="text" placeholder="0" maxlength="5" pattern="[0-9]*" /> <!-- Payment amount (pounds) -->
+				<label for="pennies">.</label>
+				<input name="pennies" type="text" placeholder="0" maxlength="2" pattern="[0-9]*" /> <!-- Payment amount (pennies) -->
+				
+			</fieldset>
+			
+			<!-- TODO (adds a lot of extra work)
+			Type
+			<select>
+				<option>Split</option>
+				<option>Percentage</option>
+				<option>Exact</option>
+			</select>
+			-->
+			
+			<hr />
+			
+			<!-- Payment members fieldset -->
+			<fieldset>
+			
+				<legend class="clear">Members<i class="fa fa-plus" aria-hidden="true"></i></legend>
+				
+				<div id="members">None</div>
+				
+			</fieldset>
+			
+			<!-- Submit button -->
+			<div class="wrapper">
+				<input type="submit" value="Create" />
+			</div>
+			
+		</form>
+		
+			
+	
+	</body>
+</html>

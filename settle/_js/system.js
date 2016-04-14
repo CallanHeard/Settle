@@ -116,7 +116,8 @@
 <li><a href="dashboard.html?id=' + id + '"' + (selected == 'dashboard' ? ' class="selected"' : '') + '>Dashboard<i class="fa fa-home" aria-hidden="true"></i></a></li>\
 <li><a href="#">Notifications<i class="fa fa-flag" aria-hidden="true"></i></a></li>\
 <li><a href="create_payment.html?id=' + id + '"' + (selected == 'payment' ? ' class="selected"' : '') + '>New Payment<i class="fa fa-plus" aria-hidden="true"></i></a></li>\
-<li><a href="#">Account<i class="fa fa-wrench" aria-hidden="true"></i></a></li>\
+<li class="split"><a href="#">Account<i class="fa fa-wrench" aria-hidden="true"></i></a></li>\
+<li><a href="#">Help<i class="fa fa-info" aria-hidden="true"></i></a></li>\
 </ul>\
 </div>';
 		
@@ -484,4 +485,11 @@
 			
 		}
 	
+	}
+	
+	/*
+	 * createPayment function for loading create payment page content
+	 */
+	function createPayment() {
+		document.forms[0].action = server + handle + '?id=' + id; //Set input form action
 	}

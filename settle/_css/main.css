@@ -119,7 +119,7 @@ body > * {
 }
 
 /* Separate account option */
-#sidebar ul li:last-of-type {
+#sidebar ul li.split {
 	margin-top: 20px;
 }
 
@@ -146,6 +146,8 @@ body > * {
 /* Menu icons */
 #sidebar ul li a i {
 	float:		right;
+	width:		20px;	/* Centre align all icons */
+	text-align:	center;	/* Centre align all icons */
 }
 
 /* User profile in sidebar */
@@ -217,6 +219,11 @@ body > * {
 	color:		#000000;
 }
 
+/* Overview link active state */
+#overview a:active {
+	color: #3366BB;
+}
+
 /* All total value headings together */
 #overview #totals {
 	float: right;
@@ -274,12 +281,12 @@ body > * {
 
 /* Separator for each payment in a list */
 .payment_list hr {
-	margin-top:		0;
-	margin-bottom:	0;
-	margin-right:	-10px;
-	border:			0;
-	height:			1px;
-	background-image: linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1));
+	margin-top:			0;
+	margin-bottom:		0;
+	margin-right:		-10px;
+	border:				0;
+	height:				1px;
+	background-image:	linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1));
 }
 
 /* Individual payment */
@@ -424,10 +431,79 @@ body > * {
 
 /* Separator for each user in a list */
 #members li hr {
-	margin-top:		0;
-	margin-bottom:	0;
-	margin-right:	-10px;
-	border:			0;
-	height:			1px;
-	background-image: linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1));
+	margin-top:			0;
+	margin-bottom:		0;
+	margin-right:		-10px;
+	border:				0;
+	height:				1px;
+	background-image:	linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1));
+}
+
+/* Every element of the create payment form */
+form > * {
+	margin-bottom: 10px;
+	padding-top:	10px;
+}
+
+/* All form inputs */
+form input {
+	width: 100%;
+}
+
+/* Payment amount labels */
+form label[for="pounds"], form label[for="pennies"] {
+	font-family: Mono;
+}
+
+/* Payment amount inputs */
+form input[name="pounds"], form input[name="pennies"] {
+	width:			50px;
+	font-family:	Mono;
+}
+
+/* Payment amount pounds right-align */
+form input[name="pounds"] {
+	text-align: right;
+}
+
+/* Labels for groups of inputs */
+form fieldset legend {
+	float: left;
+	width: 100%;
+}
+
+/* Add member button */
+form fieldset legend i {
+	float:		right;
+	margin-top:	-10px;
+	padding:	10px;
+}
+
+/* HRs in form */
+form hr {
+	margin:				0 -10px 10px;
+	border:				0;
+	padding:			0;
+	height:				1px;
+	background-image:	linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1), rgba(221, 221, 221, 0));
+}
+
+/* Submit button fixed bottom position and gradient border */
+form div.wrapper {
+	position: fixed;
+	bottom: 0;
+	margin: 0;
+	margin-left: -10px;
+	padding-top: 1px;
+	width: 100%;
+	background: linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1), rgba(221, 221, 221, 0));
+}
+
+/* Submit button */
+form input[type="submit"] {
+	padding:		10px;
+    font-size:		16px;
+    font-family:	Heading;
+	color:			#3366BB;
+	background:		#FFFFFF;
 }
