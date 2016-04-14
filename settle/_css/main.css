@@ -76,6 +76,11 @@ body > * {
 	opacity:		0.8;
 }
 
+/* Top bar link active state */
+#topbar i:active {
+	color: #3366BB; /* Blue */
+}
+
 /* Align closer to left side */
 #topbar i:first-of-type {
 	margin-left: -10px;
@@ -197,6 +202,7 @@ body > * {
 	float:		left;
 	padding:	10px 20px 0; /* Spacing plus a nice clickable size for the button */
 	opacity:	0.8;
+	font-size:	48px;
 	color:		#000000;
 }
 
@@ -372,6 +378,7 @@ body > * {
 	margin-left:	5px;
 	padding-bottom:	10px;
 	width:			60%;
+	color:			#000000;
 }
 
 /* User details ellipsis overflow effect */
@@ -379,7 +386,6 @@ body > * {
 	white-space:	nowrap;
 	overflow:		hidden;
 	text-overflow:	ellipsis;
-	color:			#000000;
 }
 
 /* Slightly vary detail font styles/sizes */

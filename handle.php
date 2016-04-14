@@ -89,7 +89,7 @@
 		//Generate SQL - only get required columns to minimise server usage/traffic
 		$sql = "SELECT p.id, p.name, p.total, p.contributors, p.host_user, u.first_name, u.last_name
 				FROM payment p, user u
-				WHERE p.host_user = {$_GET['payments']} AND u.id = {$_GET['payments']}";
+				WHERE p.host_user = {$_GET['payments']} AND u.id = {$_GET['payments']} AND p.total > 0";
 				
 		$result = $connection->query($sql); //And execute
 		
@@ -125,16 +125,18 @@
 		$connection = establish_connection(); //Establish database connection
 		
 		//Generate SQL - only get required columns to minimise server usage/traffic
-		$sql = "SELECT p.name, p.description, p.total, p.type, p.host_user, u.email, u.first_name, u.last_name
+		$sql = "SELECT p.name, p.description, p.total, p.host_user, u.email, u.first_name, u.last_name
 				FROM payment p, user u
 				WHERE p.id = {$_GET['payment']} AND u.id = p.host_user";
-				
+
 		$result = $connection->query($sql); //And execute
 		
 		//There should only be one
 		if ($result->num_rows == 1) {
 			echo json_encode($result->fetch_assoc()); //Return user details as JSON object
 		}
+		
+		$connection->close(); //Close database connection
 		
 	}
 	
@@ -166,5 +168,31 @@
 			echo json_encode($results); //Return results as JSON object array
 			
 		}
+		
+		$connection->close(); //Close database connection
+		
+	}
+	
+	/*
+	 * Handle notification of contributor payment
+	 */
+	if (isset($_GET['paid']) && isset($_GET['contributor'])) {
+		
+		$connection = establish_connection(); //Establish database connection
+
+		//Generate SQL for updates
+		$sql1 = "UPDATE contributes c
+				SET c.settled = 1
+				WHERE c.payment_id = {$_GET['paid']} AND c.user_id = {$_GET['contributor']}";
+				
+		$sql2 = "UPDATE payment p INNER JOIN contributes c ON (c.payment_id = p.id)
+				SET p.total = p.total - c.amount, p.contributors = p.contributors - 1
+				WHERE p.id = {$_GET['paid']} AND c.user_id = {$_GET['contributor']}";
+
+		/* TODO very bad - should be transaction handling rollbacks etc */
+		$connection->query($sql1);
+		$connection->query($sql2);
+		
+		$connection->close(); //Close database connection
 		
 	}

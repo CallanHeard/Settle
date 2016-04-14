@@ -13,6 +13,12 @@
 	var payments;	//Current user's payments
 	
 	var currentHeading = 0; //Starting page overview heading
+	
+	var checkOffSet = 'off'; //Used on payment page, checkOff function
+	
+	var blue	= '#3366BB'; //Blue CSS colour
+	var green	= '#66CD00'; //Green CSS colour
+	var black	= '#000000'; //Black CSS colour (standard black hex)
 
 	/*
 	 * load function for retrieving page content from database
@@ -89,6 +95,7 @@
 	
 	/*
 	 * Adds back button to topbar
+	 * TODO buggy atm and not being used - reloading pages in places (such as payment) and causes back button to not work
 	 */
 	function topbarBack() {
 		/* TODO add after nav button, not before */
@@ -218,16 +225,21 @@
 			//Once request is complete
 			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 				
-				payments = JSON.parse(xmlhttp.responseText); //Parse response
+				//If there is a response
+				if (xmlhttp.responseText != '') {
 				
-				//Convert parsed JSON objects into Payment objects
-				for (var i in payments) {
-				
-					payments[i] = new Payment(payments[i]); //Create new Payment object from JSON
+					payments = JSON.parse(xmlhttp.responseText); //Parse response
 					
-					document.getElementById(payments[i].orientation).style.display = 'block';									//Show list heading
-					document.getElementById(payments[i].orientation).getElementsByTagName('ul')[0].innerHTML += payments[i];	//Add Payment to page
-				
+					//Convert parsed JSON objects into Payment objects
+					for (var i in payments) {
+					
+						payments[i] = new Payment(payments[i]); //Create new Payment object from JSON
+						
+						document.getElementById(payments[i].orientation).style.display = 'block';									//Show list heading
+						document.getElementById(payments[i].orientation).getElementsByTagName('ul')[0].innerHTML += payments[i];	//Add Payment to page
+					
+					}
+					
 				}
 				
 			}
@@ -239,7 +251,7 @@
 		
 		//If there are no payments
 		if (document.getElementById('owes').style.display == '' && document.getElementById('owed').style.display == '') {
-			document.body.innerHTML += '<p>No payments found! Click the link above to create one, or use your PIN to join someone else\'s</p>';
+			document.body.innerHTML += '<p>No payments found! Click the plus button above to create one, or use your PIN to join someone else\'s</p>';
 		}
 		
 		//Calculate page overview heading totals
@@ -277,9 +289,11 @@
 	 */
 	function payment() {
 		
-		topbarBack(); //Add back button
-		
+		//topbarBack(); //Add back button
+
 		var payment_id = getParam('payment'); //Get payment ID
+		
+		var complete; //Where the payment is complete
 
 		//If payment ID is present
 		if (payment_id != null && payment_id != '') {
@@ -300,11 +314,15 @@
 					host.id = payment.host_user;							//Update host id before initialising
 					host = new User(host);									//Initialise host as User object
 					
+					complete = payment.total == 0; //Set payment complete status
+					
 					//Load page content
 					document.title = payment.name + ' ' + document.title;										//Update page title
 					document.getElementById('topbar').getElementsByTagName('h1')[0].innerHTML = payment.name;	//Update page heading
 					
-					document.getElementById('total_total').innerHTML = payment.total; //Update payment total heading value
+					//Generate appropriate overview link for incoming/outgoing payment (very long!)
+					var overviewLink = payment.host_user == id ? '<a href="javascript: ' + (complete ? 'alert(\'Payment Complete!\')' : 'checkOff(\'on\')') + ';"' + (complete ? ' style="color: ' + green + '"' : '') + '><i class="fa fa-check-square-o" aria-hidden="true"></i></a>' : '<a href="javascript: notify();"><i class="fa fa-bell-o" aria-hidden="true"></i></a>';
+					document.getElementById('overview').innerHTML = overviewLink + document.getElementById('overview').innerHTML;	//Add link to overview section
 					
 					document.getElementById('details').innerHTML = host;									//Add host details to details section
 					document.getElementById('details').innerHTML += '<p>' + payment.description + '</p>';	//Add payment description to details section
@@ -328,6 +346,7 @@
 					members = JSON.parse(members_request.responseText); //Parse response
 	
 					//Calculate page overview heading totals
+					var total		= 0;
 					var remaining	= 0;
 					var paid		= 0;
 	
@@ -336,7 +355,10 @@
 					
 						members[i] = new User(members[i]); //Create new User object from JSON
 						
-						document.getElementById('members').innerHTML += '<li>' + members[i] + '<hr /></li>'; //Add contributor to list on page
+						//Add contributor to list on page
+						document.getElementById('members').innerHTML += '<li' + (members[i].settled == 0 ? ' onclick="paid(' + members[i].id + ', \'' + members[i].fullName + '\')"' : '') + '>' + members[i] + '<hr /></li>';
+						
+						total += members[i].amount; //Add amount to total payment
 						
 						//If payment is paid
 						if (members[i].settled == 1) {
@@ -349,10 +371,13 @@
 						
 					}
 					
+					document.getElementById('total_total').innerHTML = parseFloat(Math.round(Math.abs(total) * 100) / 100).toFixed(2); //Update payment total heading value
+					
 					document.getElementById('paid_total').innerHTML = parseFloat(Math.round(Math.abs(paid) * 100) / 100).toFixed(2);	//Set paid value, formatted two decimal places
 					document.getElementById('paid_total').setAttribute('class', (paid > 0 ? 'green' : 'red'));							//Set owes colour
 					
-					document.getElementById('remaining_total').innerHTML = parseFloat(Math.round(Math.abs(remaining) * 100) / 100).toFixed(2); //Set remaining value, formatted two decimal places
+					document.getElementById('remaining_total').innerHTML = parseFloat(Math.round(Math.abs(remaining) * 100) / 100).toFixed(2);	//Set remaining value, formatted two decimal places
+					document.getElementById('remaining_total').setAttribute('class', (remaining > 0 ? 'red' : 'green'));						//Set owes colour
 					
 				}
 				
@@ -361,10 +386,99 @@
 			members_request.open('GET', server + handle + 'contributors=' + payment_id, false);	//Specify AJAX request
 			members_request.send();																//And send
 			
+			if (!complete && window.location.hash == '#checkOff') checkOff('on'); //If already checking-off, go back to that state
+			
 		}
 		//Else, TODO handle error
 		else {
 			window.location = 'dashboard.html?id=' + id; //Return to dashboard
+		}
+	
+	}
+	
+	/*
+	 * checkOff function for switching checkOffSet value
+	 */
+	function checkOff(set) {
+		
+		//Switch on input value
+		switch (set) {
+			
+			//Input is on
+			case 'on':
+				document.getElementById('overview').getElementsByTagName('a')[0].setAttribute('href', 'javascript: checkOff(\'off\');');	//Set button to input off
+				document.getElementById('overview').getElementsByTagName('a')[0].style.color = blue;										//Change colour of button
+				
+				var members = document.getElementById('members').getElementsByTagName('li'); //Get members
+				
+				//Loop through members
+				for (var i = 0; i < members.length; i++) {
+					
+					//If contributor has not paid
+					if (members[i].getElementsByClassName('amount')[0].classList.contains('red')) {
+						members[i].getElementsByClassName('details')[0].style.color = blue; //Set text colour to blue
+					}
+					
+				}
+				
+				break;
+			
+			//Input is off
+			case 'off':
+				document.getElementById('overview').getElementsByTagName('a')[0].setAttribute('href', 'javascript: checkOff(\'on\');');	//Set button to input off
+				document.getElementById('overview').getElementsByTagName('a')[0].style.color = black;									//Change colour of button
+				
+				var members = document.getElementById('members').getElementsByTagName('li'); //Get members
+				
+				//Loop through members
+				for (var i = 0; i < members.length; i++) {
+					members[i].getElementsByClassName('details')[0].style.color = black; //Set text colour to black
+				}
+				
+				break;
+			
+		}
+		
+		checkOffSet = set; //Update checkOffSet value
+		
+	}
+	
+	/*
+	 * paid function for specifying a payment contributor has paid
+	 */
+	function paid(contributor_id, name) {
+	
+		//If in 'check off' mode
+		if (checkOffSet == 'on') {
+			
+			//Confirm action
+			if (confirm('Confirm ' + name + ' has paid you? (This is irreversible)')) {
+				
+				//Handle user paid
+				xmlhttp = new XMLHttpRequest(); //Create new AJAX request object
+				
+				//Handle various callbacks from request
+				xmlhttp.onreadystatechange = function() {
+				
+					//Once request is complete
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+						
+						//Maintain checking-off state
+						if (window.location.hash != '#checkOff') {
+							window.location = window.location + '#checkOff';
+						}
+						
+						window.location.reload(); //Reload page to show updated information
+						
+					}
+					
+				}
+				
+				xmlhttp.open('GET', server + handle + 'paid=' + getParam('payment') + '&contributor=' + contributor_id, false);	//Specify AJAX request
+				xmlhttp.send();																									//And send
+				
+			}
+			
 		}
 	
 	}

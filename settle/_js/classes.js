@@ -66,7 +66,7 @@
 
 			//If amount is defined (ie this is a contributor user)
 			if (typeof this.amount !== 'undefined') {
-				returnString += '<p class="amount ' + (this.settled == 1 ? 'green' : 'red') + '">' + this.amount + '</p>';
+				returnString += '<p class="amount ' + (this.settled == 1 ? 'green' : 'red') + '">' + parseFloat(Math.round(Math.abs(this.amount) * 100) / 100).toFixed(2); + '</p>';
 			}
 			
 			returnString += '</div>';
