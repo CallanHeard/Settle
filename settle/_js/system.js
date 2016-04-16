@@ -499,35 +499,22 @@
 	 */
 	function newMember(button) {
 		
-		var members = document.getElementById('members');			//Get members form element
-		var total = members.getElementsByTagName('input').length;	//Get current number of members
+		var input = document.getElementById('newMember'); //Get new member input
 		
-		//If button clicked to off
-		if (button.style.color == 'rgb(51, 102, 187)') { //<-- This is so bad!
-		
-			button.style.color = '#000000'; //Black
-			members.removeChild(document.getElementById('input_' + (total - 1))); //Remove button
-		
+		//If input is not visible
+		if (input.style.display == 'none') {
+			
+			button.style.color = '#3366BB';	//Set button to on
+			input.style.display = 'block';	//Display input
+			input.focus();					//Focus input
+			
 		}
-		//Else button click was to on
+		//Else, button is visible
 		else {
 			
-			button.style.color = '#3366BB'; //Blue button
+			button.style.color = '#000000'; //Set button to off
+			input.style.display = 'none';	//Hide input
 			
-			//Markup for new input
-			var input = '<input id="input_' + total + '" type="text" placeholder="Enter User PIN: &#34ABC12&#34" maxlength="5" onkeyup="addMember(this)" />'
-		
-			//If there are no members yet
-			if (total == 0) {
-				members.innerHTML = input; //Overwrite default text with new input
-			}
-			//Else, only allow one PIN input at a time
-			else if (members.getElementsByTagName('input')[total - 1].type == 'hidden') {
-				members.innerHTML = input + members.innerHTML; //And add a new input to beginning of the list
-			}
-			
-			document.getElementById('input_' + total).focus(); //Focus the new input (should probably just used DOM to create the element)
-
 		}
 			
 	}
@@ -552,8 +539,8 @@
 					//If there is a result
 					if (xmlhttp.responseText != '') {
 						
-						var flag	= true;					//Flag for validating user
-						var parent	= pin.parentElement;	//Get members list
+						var flag	= true;									//Flag for validating user
+						var members	= document.getElementById('members');	//Get members list
 						
 						var member = new User(JSON.parse(xmlhttp.responseText)); //Get response and parse into User object
 						
@@ -568,7 +555,7 @@
 						//Else, user is different
 						else {
 						
-							var inputs = parent.getElementsByTagName('input');	//Get inputs in members list
+							var inputs = members.getElementsByTagName('input');	//Get inputs in members list
 							
 							//Loop through inputs
 							for (var i = 0; i < inputs.length; i++) {
@@ -589,8 +576,17 @@
 						//If user can be added
 						if (flag) {
 						
-							parent.removeChild(pin);																											//Remove previous text input
-							parent.innerHTML = member + '<input id="member_' + member.id + '" name="members[]" type="hidden" value="' + member.id + '" />' + parent.innerHTML;	//Add user details plus hidden input to form
+							pin.value = ''; //Clear the PIN
+					
+							var remaining = ''; //Remaining HTML of members list if needed
+							
+							//If there are members already in the list
+							if (inputs.length > 0) {
+								remaining = members.innerHTML; //Get remaining HTML
+							}
+							
+							//Add user details plus hidden input to top of members list
+							members.innerHTML = member + '<input id="member_' + member.id + '" name="members[]" type="hidden" value="' + member.id + '" />' + remaining;
 						
 						}
 						

@@ -508,13 +508,13 @@ form hr {
 /* List of members being added to the payment */
 form #members {
 	margin-bottom:	20px;
-	height:			200px;
+	height:			175px;
 	width:			100%;
 	overflow-y:		scroll;
 }
 
 /* New member PIN input */
-form #members input[type="text"] {
+form #newMember {
 	margin-bottom: 10px;
 }
 
