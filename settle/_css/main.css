@@ -42,12 +42,12 @@
 
 /* Generic class for 'red' */
 .red {
-	color: #E50000;
+	color: #E50000; /* Red */
 }
 
 /* Generic class for 'green' */
 .green {
-	color: #66CD00;
+	color: #66CD00; /* Green */
 }
 
 body {
@@ -62,7 +62,7 @@ body > * {
 
 /* Top bar */
 #topbar {
-	border-bottom: 1px solid #DDDDDD;
+	border-bottom: 1px solid #DDDDDD; /* Grey */
 }
 
 /* All top bar direct children */
@@ -95,7 +95,7 @@ body > * {
 }
 
 /* Black out background for sidebar */
-#sidebar .overlay {
+.overlay {
 	position:	absolute;
 	top:		0;
 	left:		0;
@@ -140,7 +140,7 @@ body > * {
 
 /* Menu option link click effect */
 #sidebar ul li a:active {
-	color: #3366BB;
+	color: #3366BB; /* Blue */
 }
 
 /* Menu icons */
@@ -184,13 +184,13 @@ body > * {
 }
 
 /* Score value */
-.profile p:nth-child(5) span {
+.score {
 	font-size:	16px;
 	font-weight: bold;
 	font-family: Mono;
 }
 
-.profile p:nth-child(5) span:after {
+.score:after {
 	content: '%'; /* Percent sign after value */
 }
 
@@ -207,7 +207,7 @@ body > * {
 /* Page overview */
 #overview {
 	margin-bottom:	5px;
-	border-bottom:	1px solid #DDDDDD;
+	border-bottom:	1px solid #DDDDDD; /* Grey */
 }
 
 /* Overview link */
@@ -221,7 +221,7 @@ body > * {
 
 /* Overview link active state */
 #overview a:active {
-	color: #3366BB;
+	color: #3366BB; /* Blue */
 }
 
 /* All total value headings together */
@@ -325,7 +325,7 @@ body > * {
 
 /* Payment link click effect */
 .payment a:active .details p {
-	color: #3366BB;
+	color: #3366BB; /* Blue */
 }
 
 /* Slightly vary detail font styles/sizes */
@@ -354,7 +354,7 @@ body > * {
 
 /* View full payment details */
 #details {
-	border-bottom:	1px solid #DDDDDD;
+	border-bottom:	1px solid #DDDDDD; /* Grey */
 	padding-top:	5px;
 	padding-bottom:	5px;
 }
@@ -429,6 +429,13 @@ body > * {
 	content: '\00a3'; /* Pound sign before value */
 }
 
+/* New user score */
+.user .score {
+	float:			right;
+	margin-top:		20px;
+	margin-right:	20px;
+}
+
 /* Separator for each user in a list */
 #members li hr {
 	margin-top:			0;
@@ -439,10 +446,15 @@ body > * {
 	background-image:	linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1));
 }
 
-/* Every element of the create payment form */
-form > * {
-	margin-bottom: 10px;
-	padding-top:	10px;
+/* Create payment form */
+form {
+	padding-top: 20px; /* Nice bit of spacing from the top of the page */
+}
+
+/* Direct input children of the form */
+form > input, form > fieldset {
+	margin-bottom:	20px;
+	padding-top:	5px;
 }
 
 /* All form inputs */
@@ -479,24 +491,46 @@ form fieldset legend i {
 	padding:	10px;
 }
 
+/* Add member button active state */
+form fieldset legend i:active {
+	color: #3366BB /* Blue */
+}
+
 /* HRs in form */
 form hr {
-	margin:				0 -10px 10px;
+	margin:				0 -10px 20px;
 	border:				0;
 	padding:			0;
 	height:				1px;
 	background-image:	linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1), rgba(221, 221, 221, 0));
 }
 
+/* List of members being added to the payment */
+form #members {
+	margin-bottom:	20px;
+	height:			200px;
+	width:			100%;
+	overflow-y:		scroll;
+}
+
+/* New member PIN input */
+form #members input[type="text"] {
+	margin-bottom: 10px;
+}
+
+form #members .user p {
+	color: #3366BB; /* Blue */
+}
+
 /* Submit button fixed bottom position and gradient border */
 form div.wrapper {
-	position: fixed;
-	bottom: 0;
-	margin: 0;
-	margin-left: -10px;
-	padding-top: 1px;
-	width: 100%;
-	background: linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1), rgba(221, 221, 221, 0));
+	position:		fixed;
+	bottom:			0;
+	margin:			0;
+	margin-left:	-10px;
+	padding-top:	1px;
+	width:			100%;
+	background:		linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1), rgba(221, 221, 221, 0));
 }
 
 /* Submit button */
@@ -504,6 +538,6 @@ form input[type="submit"] {
 	padding:		10px;
     font-size:		16px;
     font-family:	Heading;
-	color:			#3366BB;
+	color:			#3366BB; /* Blue */
 	background:		#FFFFFF;
 }

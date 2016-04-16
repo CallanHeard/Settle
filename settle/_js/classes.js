@@ -45,7 +45,7 @@
 <img src="' + this.profile + '" alt="' + this.fullName + '\'s Profile Image" />\
 <p>' + this.fullName + '</p>\
 <p>' + this.email + '</p>\
-<p>Your Score: <span' + (this.percentage < 70 ? ' class="red"' : ' class="green"') + '>' + this.percentage + '</span></p></div>';
+<p>Your Score: <span class="score ' + (this.percentage < 70 ? 'red' : 'green') + '">' + this.percentage + '</span></p></div>';
 			
 			return returnString; //Return generated mark-up
 			
@@ -65,9 +65,14 @@
 <p>' + this.fullName + (this.id == id ? ' (You)' : '') + '</p>\
 <p>' + this.email + '</p></div>';
 
-			//If amount is defined (ie this is a contributor user)
+			//If amount is defined (ie this is a payment contributor user)
 			if (typeof this.amount !== 'undefined') {
 				returnString += '<p class="amount ' + (this.settled == 1 ? 'green' : 'red') + '">' + parseFloat(Math.round(Math.abs(this.amount) * 100) / 100).toFixed(2); + '</p>';
+			}
+			
+			//If percentage score is defined (ie user being added to a payment)
+			if (typeof this.percentage !== 'undefined') {
+				returnString += '<div class="score ' + (this.percentage < 70 ? 'red' : 'green') + '">' + this.percentage + '</div>';
 			}
 			
 			returnString += '</div>';

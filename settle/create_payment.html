@@ -24,9 +24,11 @@
 		<!-- Form for creating a new payment -->
 		<form method="post">
 			
-			<input type="text" placeholder="Name" maxlength="25" /> <!-- Payment name -->
+			<label>Name</label>
+			<input type="text" placeholder="&#34Cinema tickets&#34" maxlength="25" /> <!-- Payment name -->
 			
-			<input type="text" placeholder="Description (Optional)" maxlength="100" /><!-- Payment description -->
+			<label>Description (Optional)</label>
+			<input type="text" placeholder="&#34From BvS last week&#34" maxlength="100" /><!-- Payment description -->
 			
 			<!-- Payment amount fieldset -->
 			<fieldset>
@@ -54,7 +56,7 @@
 			<!-- Payment members fieldset -->
 			<fieldset>
 			
-				<legend class="clear">Members<i class="fa fa-plus" aria-hidden="true"></i></legend>
+				<legend class="clear">Members<i onclick="newMember(this);" class="fa fa-plus" aria-hidden="true"></i></legend>
 				
 				<div id="members">None</div>
 				
@@ -62,12 +64,10 @@
 			
 			<!-- Submit button -->
 			<div class="wrapper">
-				<input type="submit" value="Create" />
+				<input type="submit" value="Create" name="createPayment" />
 			</div>
 			
 		</form>
-		
-			
-	
+
 	</body>
 </html>

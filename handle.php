@@ -17,7 +17,7 @@
  
 	date_default_timezone_set("Europe/London"); //Set default timezone
 
-	//echo substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 5)), 0, 5);
+	//echo substr(str_shuffle(str_repeat("123456789abcdefghjkmnpqrstuvwxyz", 5)), 0, 5);
 	
 	/*
 	 * establish_connection function for establishing a connection to the database
@@ -137,7 +137,7 @@
 		
 		//There should only be one
 		if ($result->num_rows == 1) {
-			echo json_encode($result->fetch_assoc()); //Return user details as JSON object
+			echo json_encode($result->fetch_assoc()); //Return payment details as JSON object
 		}
 		
 		$connection->close(); //Close database connection
@@ -227,6 +227,29 @@
 			$connection->query($sql2);
 			$connection->query($sql3);
 			
+		}
+		
+		$connection->close(); //Close database connection
+		
+	}
+	
+	/*
+	 * Handle quick user requests (when adding members to a new payment)
+	 */
+	if (isset($_GET['newUser'])) {
+		
+		$connection = establish_connection(); //Establish database connection
+	
+		//Generate SQL for required values
+		$sql = "SELECT id, first_name, last_name, email, percentage
+				FROM user
+				WHERE pin = \"{$_GET['newUser']}\"";
+				
+		$result = $connection->query($sql); //And execute
+		
+		//There should only be one
+		if ($result->num_rows == 1) {
+			echo json_encode($result->fetch_assoc()); //Return user details as JSON object
 		}
 		
 		$connection->close(); //Close database connection

@@ -491,5 +491,124 @@
 	 * createPayment function for loading create payment page content
 	 */
 	function createPayment() {
-		document.forms[0].action = server + handle + '?id=' + id; //Set input form action
+		document.forms[0].action = server + handle + 'id=' + id; //Set input form action
+	}
+	
+	/*
+	 * newMember function for adding a new member input to a payment
+	 */
+	function newMember(button) {
+		
+		var members = document.getElementById('members');			//Get members form element
+		var total = members.getElementsByTagName('input').length;	//Get current number of members
+		
+		//If button clicked to off
+		if (button.style.color == 'rgb(51, 102, 187)') { //<-- This is so bad!
+		
+			button.style.color = '#000000'; //Black
+			members.removeChild(document.getElementById('input_' + (total - 1))); //Remove button
+		
+		}
+		//Else button click was to on
+		else {
+			
+			button.style.color = '#3366BB'; //Blue button
+			
+			//Markup for new input
+			var input = '<input id="input_' + total + '" type="text" placeholder="Enter User PIN: &#34ABC12&#34" maxlength="5" onkeyup="addMember(this)" />'
+		
+			//If there are no members yet
+			if (total == 0) {
+				members.innerHTML = input; //Overwrite default text with new input
+			}
+			//Else, only allow one PIN input at a time
+			else if (members.getElementsByTagName('input')[total - 1].type == 'hidden') {
+				members.innerHTML = input + members.innerHTML; //And add a new input to beginning of the list
+			}
+			
+			document.getElementById('input_' + total).focus(); //Focus the new input (should probably just used DOM to create the element)
+
+		}
+			
+	}
+	
+	/*
+	 * addMember function for actually adding a member to a payment from a given PIN
+	 */
+	function addMember(pin) {
+		
+		//If PIN complete
+		if (pin.value.length == 5) {
+			
+			//Get quick user details
+			xmlhttp = new XMLHttpRequest(); //Create new AJAX request object
+			
+			//Handle various callbacks from request
+			xmlhttp.onreadystatechange = function() {
+			
+				//Once request is complete
+				if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+					
+					//If there is a result
+					if (xmlhttp.responseText != '') {
+						
+						var flag	= true;					//Flag for validating user
+						var parent	= pin.parentElement;	//Get members list
+						
+						var member = new User(JSON.parse(xmlhttp.responseText)); //Get response and parse into User object
+						
+						//If the entered user is the same as the current user
+						if (member.id == id) {
+						
+							alert('You cannot add yourself');	//Alert the user
+							pin.value = '';						//Clear the PIN
+							flag = false;						//Prevent add
+							
+						}
+						//Else, user is different
+						else {
+						
+							var inputs = parent.getElementsByTagName('input');	//Get inputs in members list
+							
+							//Loop through inputs
+							for (var i = 0; i < inputs.length; i++) {
+								
+								//If user is already in the list
+								if (inputs[i].id == 'member_' + member.id) {
+									
+									alert(member.fullName + ' has already been added');	//Alert user
+									pin.value = '';										//Clear the PIN
+									flag = false;										//Prevent add
+								
+								} 
+								
+							}
+							
+						}
+						
+						//If user can be added
+						if (flag) {
+						
+							parent.removeChild(pin);																											//Remove previous text input
+							parent.innerHTML = member + '<input id="member_' + member.id + '" name="members[]" type="hidden" value="' + member.id + '" />' + parent.innerHTML;	//Add user details plus hidden input to form
+						
+						}
+						
+					}
+					//Else, no user found
+					else {
+						alert('No user found, check the PIN entered is correct'); //Alert user
+					}
+					
+					
+				}
+				
+			}
+			
+			xmlhttp.open('GET', server + handle + 'newUser=' + pin.value, false);	//Specify AJAX request
+			xmlhttp.send();															//And send
+			
+			
+		}
+		
 	}
