@@ -460,6 +460,16 @@ form > input, form > fieldset {
 /* All form inputs */
 form input {
 	width: 100%;
+	color: #3366BB;
+}
+
+/* Input placeholder colour */
+form input::-webkit-input-placeholder {
+	color: #BBBBBB;
+}
+
+form label span, form legend span {
+	color: #666666;
 }
 
 /* Payment amount labels */
@@ -510,6 +520,7 @@ form #members {
 	margin-bottom:	20px;
 	height:			175px;
 	width:			100%;
+	color:			#BBBBBB;
 	overflow-y:		scroll;
 }
 

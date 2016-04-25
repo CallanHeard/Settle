@@ -71,7 +71,7 @@
 		//Generate SQL - only get required columns to minimise server usage/traffic
 		$sql = "SELECT p.id, p.name, p.total, p.contributors, c.amount, p.host_user, u.first_name, u.last_name
 				FROM payment p INNER JOIN user u ON (p.host_user = u.id), contributes c
-				WHERE c.user_id = {$_GET['payments']} AND c.payment_id = p.id AND c.settled = 0";
+				WHERE c.user_id = {$_GET['payments']} AND c.payment_id = p.id AND c.settled = 0 AND p.confirmed = 1";
 		
 		$result = $connection->query($sql); //And execute
 		
@@ -93,7 +93,7 @@
 		//Generate SQL - only get required columns to minimise server usage/traffic
 		$sql = "SELECT p.id, p.name, p.total, p.contributors, p.host_user, u.first_name, u.last_name
 				FROM payment p, user u
-				WHERE p.host_user = {$_GET['payments']} AND u.id = {$_GET['payments']} AND p.total > 0";
+				WHERE p.host_user = {$_GET['payments']} AND u.id = {$_GET['payments']} AND p.total > 0 AND p.confirmed = 1";
 				
 		$result = $connection->query($sql); //And execute
 		
@@ -253,5 +253,70 @@
 		}
 		
 		$connection->close(); //Close database connection
+		
+	}
+	
+	/*
+	 * Handle create payment requests
+	 */
+	if (isset($_POST['createPayment'])) {
+		
+		//Server-side check form entries have been submitted
+		if (isset($_POST['name']) && isset($_POST['pounds']) && isset($_POST['pennies']) && isset($_POST['members'])) {
+			
+			$connection = establish_connection(); //Establish database connection
+		
+			$total = $_POST['pounds'].'.'.$_POST['pennies']; //Total payment amounts combined
+			
+			/* TODO again, very bad - should be transaction handling rollbacks etc */
+			
+			//Generate SQL for creating new payment
+			$sql = "INSERT INTO payment (name, description, total, host_user, contributors, date)
+					VALUES (
+						'{$_POST['name']}',
+						'".(isset($_POST['description']) ? $_POST['description'] : '')."',
+						'{$total}',
+						'{$_GET['id']}',
+						'".count($_POST['members'])."',
+						'".time()."'
+					)";
+					
+			$connection->query($sql); //And execute
+			
+			$payment_id	= mysqli_insert_id($connection);								//New payment ID
+			$amount		= floor(($total / (count($_POST['members']) + 1)) * 100) / 100;	//Each member contribution amount (+1 for host who has paid) (rounded down to nearest penny)
+			
+			//Add contributor/notification table entries for each payment member
+			foreach ($_POST['members'] as $member) {
+				
+				//Generate SQL for adding new contribution
+				$sql = "INSERT INTO contributes (user_id, payment_id, amount)
+						VALUES (
+							'{$member}',
+							'{$payment_id}',
+							'{$amount}'
+						)";
+				
+				$connection->query($sql); //And execute
+				
+				//Generate SQL for adding new notification
+				$sql = "INSERT INTO notifications (sender_id, recipient_id, type)
+						VALUES (
+							'{$_GET['id']}',
+							'{$member}',
+							'1'
+						)";
+				
+				$connection->query($sql); //And execute
+				
+			}
+			
+			$connection->close(); //Close database connection
+		
+		}
+		//Else, something missing
+		else {
+			//Handle error
+		}
 		
 	}

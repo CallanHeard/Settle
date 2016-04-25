@@ -495,7 +495,7 @@
 	}
 	
 	/*
-	 * newMember function for adding a new member input to a payment
+	 * newMember function for showing/hiding the new member input on a new payment
 	 */
 	function newMember(button) {
 		
@@ -520,7 +520,7 @@
 	}
 	
 	/*
-	 * addMember function for actually adding a member to a payment from a given PIN
+	 * addMember function for actually adding a member to a new payment from a given PIN
 	 */
 	function addMember(pin) {
 		
@@ -586,7 +586,7 @@
 							}
 							
 							//Add user details plus hidden input to top of members list
-							members.innerHTML = member + '<input id="member_' + member.id + '" name="members[]" type="hidden" value="' + member.id + '" />' + remaining;
+							members.innerHTML = '<div class="clear" onclick="removeMember(this, member_' + member.id + ');">' + member + '</div><input id="member_' + member.id + '" name="members[]" type="hidden" value="' + member.id + '" />' + remaining;
 						
 						}
 						
@@ -606,5 +606,45 @@
 			
 			
 		}
+		
+	}
+	
+	/*
+	 * removeMember function for removing a member from a new payment
+	 */
+	function removeMember(user, input) {
+		
+		//Confirm action
+		if (confirm('Remove ' + user.childNodes[0].childNodes[1].childNodes[0].innerHTML + '?')) {
+
+			members = user.parentNode;	//Get members list
+			members.removeChild(user);	//Remove user details from list
+			members.removeChild(input);	//Remove hidden input
+			
+			//If there are no members remaining in the list
+			if (members.getElementsByTagName('input').length == 0) {
+				members.innerHTML = 'Use the plus icon to add people'; //Reset empty text message
+			}
+			
+		}
+		
+	}
+	
+	/*
+	 * validate function for client-side validation of the new payment creation form
+	 */
+	function validate(form) {
+		
+		//Test input values have been entered
+		var flag = !(form['name'].value == null || form['name'].value == '');	//Check payment name
+		flag = !(form['pounds'].value == null || form['pounds'].value == '');	//Check payment amount
+		flag = !(form['members[]'] == null || form['members[]'] == undefined);	//Check payment members has at least one
+		
+		//Alert if any are missing
+		if (!flag) {
+			alert('Please complete all fields');
+		}
+		
+		return flag; //Return result of check
 		
 	}
