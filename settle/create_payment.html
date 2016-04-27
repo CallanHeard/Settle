@@ -19,10 +19,10 @@
 		<script type="text/javascript" src="_js/classes.js"></script>
 
 	</head>
-	<body onload="load('New Payment', true); createPayment();">
+	<body onload="load('New Payment', true);">
 	
 		<!-- Form for creating a new payment -->
-		<form method="post" autocomplete="off" onsubmit="return validate(this);">
+		<form autocomplete="off" onsubmit="return validate(this);">
 			
 			<label>Name</label>
 			<input name="name" type="text" placeholder="&#34Cinema tickets&#34" maxlength="25" required="required" /> <!-- Payment name -->
@@ -62,8 +62,6 @@
 				<div id="members">- Use the plus icon to add people</div> <!-- List of members in the payment -->
 				
 			</fieldset>
-			
-			<input id="hostinput" name="host" type="hidden" value="" />
 			
 			<!-- Submit button -->
 			<div class="wrapper">

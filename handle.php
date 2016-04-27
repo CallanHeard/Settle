@@ -49,8 +49,27 @@
 		
 		$connection = establish_connection(); //Establish database connection
 		
-		$sql = "SELECT * FROM user WHERE id={$_GET['user']}";	//Generate SQL
+		$sql = "SELECT * FROM user WHERE id = {$_GET['user']}";	//Generate SQL
 		$result = $connection->query($sql);						//And execute
+		
+		//There should only be one
+		if ($result->num_rows == 1) {
+			echo json_encode($result->fetch_assoc()); //Return user details as JSON object
+		}
+		
+		$connection->close(); //Close database connection
+		
+	}
+	
+	/*
+	 * Handle checks for notifications
+	 */
+	if (isset($_GET['checkNotifications'])) {
+		
+		$connection = establish_connection(); //Establish database connection
+		
+		$sql = "SELECT COUNT(*) AS 'total' FROM notifications WHERE recipient_id = {$_GET['checkNotifications']}";	//Generate SQL
+		$result = $connection->query($sql);																			//And execute
 		
 		//There should only be one
 		if ($result->num_rows == 1) {
@@ -300,10 +319,11 @@
 				$connection->query($sql); //And execute
 				
 				//Generate SQL for adding new notification
-				$sql = "INSERT INTO notifications (sender_id, recipient_id, type)
+				$sql = "INSERT INTO notifications (sender_id, recipient_id, payment_id, type)
 						VALUES (
 							'{$_GET['id']}',
 							'{$member}',
+							'{$payment_id}',
 							'1'
 						)";
 				

@@ -107,6 +107,24 @@
 	 */
 	function sidebar(selected) {
 
+		var notifications;
+	
+		//Look for notifications
+		xmlhttp = new XMLHttpRequest(); //Create new AJAX request object
+		
+		//Handle various callbacks from request
+		xmlhttp.onreadystatechange = function() {
+		
+			//Once request is complete
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				notifications = parseInt(JSON.parse(xmlhttp.responseText)['total']); //Get response and parse to integer
+			}
+			
+		};
+		
+		xmlhttp.open('GET', server + handle + 'checkNotifications=' + id, false);	//Specify AJAX request
+		xmlhttp.send();															//And send
+
 		//Generate markup
 		var markup = '<!-- Page navigation -->\
 <div id="sidebar" style="display: none">\
@@ -114,7 +132,7 @@
 <ul>\
 <li>' + user.displayProfile() + '</li>\
 <li><a href="dashboard.html?id=' + id + '"' + (selected == 'dashboard' ? ' class="selected"' : '') + '>Dashboard<i class="fa fa-home" aria-hidden="true"></i></a></li>\
-<li><a href="#">Notifications<i class="fa fa-flag" aria-hidden="true"></i></a></li>\
+<li><a href="notifications.html?id=' + id + '">Notifications' + (notifications > 0 ? ' (' + notifications + ')' : '') + '<i class="fa fa-flag' + (notifications > 0 ? ' green"' : '') + '" aria-hidden="true"></i></a></li>\
 <li><a href="create_payment.html?id=' + id + '"' + (selected == 'payment' ? ' class="selected"' : '') + '>New Payment<i class="fa fa-plus" aria-hidden="true"></i></a></li>\
 <li class="split"><a href="#">Account<i class="fa fa-wrench" aria-hidden="true"></i></a></li>\
 <li><a href="#">Help<i class="fa fa-info" aria-hidden="true"></i></a></li>\
@@ -488,13 +506,6 @@
 	}
 	
 	/*
-	 * createPayment function for loading create payment page content
-	 */
-	function createPayment() {
-		document.forms[0].action = server + handle + 'id=' + id; //Set input form action
-	}
-	
-	/*
 	 * newMember function for showing/hiding the new member input on a new payment
 	 */
 	function newMember(button) {
@@ -640,11 +651,35 @@
 		flag = !(form['pounds'].value == null || form['pounds'].value == '');	//Check payment amount
 		flag = !(form['members[]'] == null || form['members[]'] == undefined);	//Check payment members has at least one
 		
+		//If everything is present
+		if (flag) {
+			
+			var formData = new FormData(form); //Create FormData object
+			
+			//Submit form
+			xmlhttp = new XMLHttpRequest(); //Create new AJAX request object
+			
+			//Handle various callbacks from request
+			xmlhttp.onreadystatechange = function() {
+			
+				//Once request is complete
+				if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+					
+					window.location.replace('dashboard.html?id=' + id); /* TODO do this better - message then click to redirect */
+					
+				}
+				
+			}
+			
+			xmlhttp.open('POST', server + handle + 'id=' + id, false);	//Specify AJAX request
+			xmlhttp.send(formData);												//And send with form data
+			
+		}
 		//Alert if any are missing
-		if (!flag) {
+		else {
 			alert('Please complete all fields');
 		}
 		
-		return flag; //Return result of check
+		return false; //Prevent form default action
 		
 	}
