@@ -123,7 +123,7 @@
 		};
 		
 		xmlhttp.open('GET', server + handle + 'checkNotifications=' + id, false);	//Specify AJAX request
-		xmlhttp.send();															//And send
+		xmlhttp.send();																//And send
 
 		//Generate markup
 		var markup = '<!-- Page navigation -->\
@@ -132,7 +132,7 @@
 <ul>\
 <li>' + user.displayProfile() + '</li>\
 <li><a href="dashboard.html?id=' + id + '"' + (selected == 'dashboard' ? ' class="selected"' : '') + '>Dashboard<i class="fa fa-home" aria-hidden="true"></i></a></li>\
-<li><a href="notifications.html?id=' + id + '">Notifications' + (notifications > 0 ? ' (' + notifications + ')' : '') + '<i class="fa fa-flag' + (notifications > 0 ? ' green"' : '') + '" aria-hidden="true"></i></a></li>\
+<li><a href="notifications.html?id=' + id + '"' + (selected == 'notifications' ? ' class="selected"' : '') + '>Notifications' + (notifications > 0 ? ' (' + notifications + ')' : '') + '<i class="fa fa-flag"' + (notifications > 0 ? ' style="color: #3366BB"' : '') + ' aria-hidden="true"></i></a></li>\
 <li><a href="create_payment.html?id=' + id + '"' + (selected == 'payment' ? ' class="selected"' : '') + '>New Payment<i class="fa fa-plus" aria-hidden="true"></i></a></li>\
 <li class="split"><a href="#">Account<i class="fa fa-wrench" aria-hidden="true"></i></a></li>\
 <li><a href="#">Help<i class="fa fa-info" aria-hidden="true"></i></a></li>\
@@ -273,7 +273,7 @@
 		
 		//If there are no payments
 		if (document.getElementById('owes').style.display == '' && document.getElementById('owed').style.display == '') {
-			document.body.innerHTML += '<p>No payments found! Click the plus button above to create one, or use your PIN to join someone else\'s</p>';
+			document.body.innerHTML += '<p>No payments found!<br /><br />Click the plus button above to create one, or use your PIN to join someone else\'s</p>';
 		}
 		
 		//Calculate page overview heading totals
@@ -664,15 +664,13 @@
 			
 				//Once request is complete
 				if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-					
 					window.location.replace('dashboard.html?id=' + id); /* TODO do this better - message then click to redirect */
-					
 				}
 				
 			}
 			
 			xmlhttp.open('POST', server + handle + 'id=' + id, false);	//Specify AJAX request
-			xmlhttp.send(formData);												//And send with form data
+			xmlhttp.send(formData);										//And send with form data
 			
 		}
 		//Alert if any are missing
@@ -681,5 +679,65 @@
 		}
 		
 		return false; //Prevent form default action
+		
+	}
+	
+	/*
+	 * notifications function for loading notifications page content
+	 */
+	function notifications() {
+		
+		//Get notifications list
+		xmlhttp = new XMLHttpRequest(); //Create new AJAX request object
+		
+		//Handle various callbacks from request
+		xmlhttp.onreadystatechange = function() {
+		
+			//Once request is complete
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				
+				//If there is a response
+				if (xmlhttp.responseText != '') {
+				
+					var notifications = JSON.parse(xmlhttp.responseText); //Parse response
+					
+					var listString = ''; //String for generating list of notifications
+					
+					//Loop through response array
+					for (var i in notifications) {
+					
+						notifications[i] = new Notification(notifications[i]);	//Create new Notification object from JSON
+						listString += notifications[i];							//Add notification to the list
+						
+					}
+					
+					document.getElementById('notifications').innerHTML = listString; //Update notifications list
+					
+				}
+				
+			}
+			
+		}
+		
+		xmlhttp.open('GET', server + handle + 'notifications=' + id, false);	//Specify AJAX request
+		xmlhttp.send();															//And send with form data
+		
+	}
+	
+	/*
+	 * confirmNotification function for handling notification confirmation
+	 */
+	function confirmNotification(notification) {
+		
+		if (confirm('Are you sure?')) {
+			
+			//Confirm notification
+			xmlhttp = new XMLHttpRequest();												//Create new AJAX request object
+			xmlhttp.open('GET', server + handle + 'confirm=' + notification, false);	//Specify AJAX request
+			xmlhttp.send();																//And send with form data
+			
+			window.location.reload(); //Reload page to show updated information
+			
+		}
 		
 	}

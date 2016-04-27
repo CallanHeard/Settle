@@ -552,3 +552,48 @@ form input[type="submit"] {
 	color:			#3366BB; /* Blue */
 	background:		#FFFFFF;
 }
+
+/* Heading for notifications page */
+#notificationsOverview {
+	padding-top:	20px;
+	text-align:		center;
+}
+
+/* HR in heading for notifications page */
+#notificationsOverview hr {
+	margin:				20px -10px 10px;
+	border:				0;
+	height:				1px;
+	background-image:	linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1), rgba(221, 221, 221, 0));
+}
+
+/* Notification profile image */
+.notification img {
+	float:			left;
+	margin:			5px;
+	margin-right:	10px;
+	border-radius:	100px;
+	height:			50px;
+	width:			50px;
+}
+
+/* Notification details */
+.notification p {
+	padding-top:	20px;
+	color:			#3366BB;
+}
+
+/* Notification details sender/payment name */
+.notification p span {
+	font-weight: bold;
+}
+
+/* Notification HR */
+.notification hr {
+	margin-top:			15px;
+	margin-bottom:		0;
+	margin-right:		-10px;
+	border:				0;
+	height:				1px;
+	background-image:	linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1));
+}

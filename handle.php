@@ -16,8 +16,6 @@
 	$database_name	= 'settle';
  
 	date_default_timezone_set("Europe/London"); //Set default timezone
-
-	//echo substr(str_shuffle(str_repeat("123456789abcdefghjkmnpqrstuvwxyz", 5)), 0, 5);
 	
 	/*
 	 * establish_connection function for establishing a connection to the database
@@ -68,12 +66,84 @@
 		
 		$connection = establish_connection(); //Establish database connection
 		
-		$sql = "SELECT COUNT(*) AS 'total' FROM notifications WHERE recipient_id = {$_GET['checkNotifications']}";	//Generate SQL
-		$result = $connection->query($sql);																			//And execute
+		//Generate SQL
+		$sql = "SELECT COUNT(*) AS 'total'
+				FROM notification
+				WHERE recipient_id = {$_GET['checkNotifications']} AND confirmed = 0";
+		
+		$result = $connection->query($sql); //And execute
 		
 		//There should only be one
 		if ($result->num_rows == 1) {
-			echo json_encode($result->fetch_assoc()); //Return user details as JSON object
+			echo json_encode($result->fetch_assoc()); //Return notification total as JSON object
+		}
+		
+		$connection->close(); //Close database connection
+		
+	}
+	
+	/*
+	 * Handle notification list requests
+	 */
+	if (isset($_GET['notifications'])) {
+		
+		$connection = establish_connection(); //Establish database connection
+		
+		//Generate SQL
+		$sql = "SELECT n.id, n.sender_id, n.recipient_id, n.payment_id, n.type, n.confirmed, u.id AS 'sender_id', u.first_name AS 'sender_first_name', u.last_name AS 'sender_last_name', p.name AS 'payment'
+				FROM notification n, user u, payment p
+				WHERE n.recipient_id = {$_GET['notifications']} AND n.confirmed = 0 AND u.id = n.sender_id AND p.id = n.payment_id";
+		
+		$result = $connection->query($sql); //And execute
+		
+		//If there is some results
+		if ($result->num_rows > 0) {
+		
+			$results;	//Array for storing/returning results
+			$i = 0;		//Counter for results
+			
+			//Loop through the results
+			while ($row = $result->fetch_assoc()) {
+				$results[$i++] = $row; //Add result to array
+			}
+			
+			echo json_encode($results); //Return results as JSON object array
+			
+		}
+		
+		$connection->close(); //Close database connection
+		
+	}
+	
+	/*
+	 * Handle notification confirmation
+	 */
+	if (isset($_GET['confirm'])) {
+		
+		$connection = establish_connection(); //Establish database connection
+		
+		//Generate SQL for update
+		$sql = "UPDATE notification SET confirmed = 1 WHERE id = {$_GET['confirm']}";
+		
+		$connection->query($sql); //And execute
+		
+		//Generate SQL for full payment confirmation check
+		$sql = "SELECT *
+				FROM notification
+				WHERE payment_id = (SELECT payment_id FROM notification WHERE id = {$_GET['confirm']}) AND type = 1 AND confirmed = 0";
+		
+		$result = $connection->query($sql); //And execute
+		
+		//If there is no results, payment fully confirmed
+		if ($result->num_rows == 0) {
+			
+			//Generate SQL for update
+			$sql = "UPDATE payment p
+					SET p.confirmed = 1
+					WHERE p.id = (SELECT n.payment_id FROM notification n WHERE n.id = {$_GET['confirm']})";
+					
+			$connection->query($sql); //And execute
+			
 		}
 		
 		$connection->close(); //Close database connection
@@ -285,7 +355,8 @@
 			
 			$connection = establish_connection(); //Establish database connection
 		
-			$total = $_POST['pounds'].'.'.$_POST['pennies']; //Total payment amounts combined
+			$total	= $_POST['pounds'].'.'.$_POST['pennies'];						//Total payment amounts combined
+			$amount	= floor(($total / (count($_POST['members']) + 1)) * 100) / 100;	//Each member contribution amount (+1 for host who has paid) (rounded down to nearest penny)
 			
 			/* TODO again, very bad - should be transaction handling rollbacks etc */
 			
@@ -294,7 +365,7 @@
 					VALUES (
 						'{$_POST['name']}',
 						'".(isset($_POST['description']) ? $_POST['description'] : '')."',
-						'{$total}',
+						'".($total - $amount)."',
 						'{$_GET['id']}',
 						'".count($_POST['members'])."',
 						'".time()."'
@@ -302,8 +373,7 @@
 					
 			$connection->query($sql); //And execute
 			
-			$payment_id	= mysqli_insert_id($connection);								//New payment ID
-			$amount		= floor(($total / (count($_POST['members']) + 1)) * 100) / 100;	//Each member contribution amount (+1 for host who has paid) (rounded down to nearest penny)
+			$payment_id = mysqli_insert_id($connection); //New payment ID
 			
 			//Add contributor/notification table entries for each payment member
 			foreach ($_POST['members'] as $member) {
@@ -319,7 +389,7 @@
 				$connection->query($sql); //And execute
 				
 				//Generate SQL for adding new notification
-				$sql = "INSERT INTO notifications (sender_id, recipient_id, payment_id, type)
+				$sql = "INSERT INTO notification (sender_id, recipient_id, payment_id, type)
 						VALUES (
 							'{$_GET['id']}',
 							'{$member}',

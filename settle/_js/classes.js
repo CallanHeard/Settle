@@ -120,7 +120,7 @@
 			returnString += '<!-- Payment ' + this.id + ' -->\
 <li class="payment clear">\
 <a href="payment.html?id=' + id + '&payment=' + this.id + '" class="clear">\
-<img src="' + this.profile + '" /> <!-- Payment host profile image -->\
+<img src="' + this.profile + '" alt="' + this.hostName + '\'s Profile Image" /> <!-- Payment host profile image -->\
 <div class="details">\
 <p>' + this.name + '</p>\
 <p>' + (o ? this.hostName : 'from ' + this.contributors + ' ' + (this.contributors == 1 ? 'person' : 'people')) + '</p>\
@@ -137,7 +137,58 @@
 	}
 	
 	/*
-	 * Sanitise function for sanitising field from database into JavaScript convention (convert '_' spaced into CamelCase)
+	 * Notification class definition
+	 */
+	function Notification(json) {
+		
+		for (var property in json) this[sanitise(property)] = json[property]; //Initialise object from JSON
+		
+		this.senderName = this.senderFirstName + ' ' + this.senderLastName; //Initialise sender's full name
+		
+		//Switch on type of notification to determine message to use
+		switch (this.type) {
+			
+			//Type 1: User added to a payment
+			case '1':
+				this.message = 'added you to the payment';
+				break;
+			
+			//Type 2: Payment member notification of payment
+			case '2':
+				this.message = 'says they have paid you for';
+				break;
+			
+		}
+		
+	}
+	
+	/*
+	 * Notification class prototype
+	 */
+	Notification.prototype = {
+		
+		/*
+		 * Override class toString method to generate mark-up
+		 */
+		toString: function() {
+			
+			var returnString	= ''; //String for storing mark-up to be returned
+			
+			//Generate mark-up
+			returnString += '<!-- Notification -->\
+<li class="notification clear" onclick="confirmNotification(\'' + this.id + '\');">\
+<img src="' + server + profiles + this.senderId + '.jpg" alt="' + this.senderName + '\'s Profile Image" />\
+<p><span>' + this.senderName + '</span> ' + this.message + ' "<span>' + this.payment + '</span>"</p>\
+<hr /></li>';
+			
+			return returnString; //Return generated mark-up
+			
+		}
+		
+	}
+	
+	/*
+	 * Sanitise function for sanitising field from database into JavaScript convention (convert '_' spaced into camelCase)
 	 */
 	function sanitise(string) {
 		
