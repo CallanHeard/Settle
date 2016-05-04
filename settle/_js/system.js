@@ -342,8 +342,24 @@
 					document.title = payment.name + ' ' + document.title;										//Update page title
 					document.getElementById('topbar').getElementsByTagName('h1')[0].innerHTML = payment.name;	//Update page heading
 					
+					//Check if notification already exists
+					notifyCheck = new XMLHttpRequest(); //Create new AJAX request object
+					
+					//Handle various callbacks from request
+					notifyCheck.onreadystatechange = function() {
+					
+						//Once request is complete
+						if (notifyCheck.readyState == 4 &&notifyCheck.status == 200) {
+							complete = notifyCheck.responseText; //Prevent notification link
+						}
+						
+					}
+		
+					notifyCheck.open('GET', server + handle + 'checkNotify=' + user.id + '&pid=' + getParam('payment'), false);	//Specify AJAX request
+					notifyCheck.send();																							//And send
+					
 					//Generate appropriate overview link for incoming/outgoing payment (very long!)
-					var overviewLink = payment.host_user == id ? '<a href="javascript: ' + (complete ? 'alert(\'Payment Complete!\')' : 'checkOff(\'on\')') + ';"' + (complete ? ' style="color: ' + green + '"' : '') + '><i class="fa fa-check-square-o" aria-hidden="true"></i></a>' : '<a href="javascript: notify();" style="font-size: 40px;"><i class="fa fa-bell-o" aria-hidden="true"></i></a>';
+					var overviewLink = payment.host_user == id ? '<a href="javascript: ' + (complete ? 'alert(\'Payment Complete!\')' : 'checkOff(\'on\')') + ';"' + (complete ? ' style="color: ' + green + '"' : '') + '><i class="fa fa-check-square-o" aria-hidden="true"></i></a>' : (complete ? '<a><i class="green fa fa-check-square-o" aria-hidden="true"></i></a>' : '<a href="javascript: notify();" style="font-size: 40px;"><i class="fa fa-bell-o" aria-hidden="true"></i></a>');
 					document.getElementById('overview').innerHTML = overviewLink + document.getElementById('overview').innerHTML;	//Add link to overview section
 					
 					document.getElementById('details').innerHTML = host;									//Add host details to details section
@@ -416,6 +432,25 @@
 			window.location = 'dashboard.html?id=' + id; //Return to dashboard
 		}
 	
+	}
+	
+	/*
+	 * notify function for notifying a payment host that a user has paid
+	 */
+	function notify() {
+		
+		//Confirm action
+		if (confirm('Notify the host that you have paid them?')) {
+		
+			//Create notification
+			xmlhttp = new XMLHttpRequest();																		//Create new AJAX request object
+			xmlhttp.open('GET', server + handle + 'notify=' + user.id + '&pid=' + getParam('payment'), false);	//Specify AJAX request
+			xmlhttp.send();																						//And send
+		
+			window.location.reload(); //Reload page to show updated information
+		
+		}
+				
 	}
 	
 	/*
@@ -729,6 +764,7 @@
 	 */
 	function confirmNotification(notification, type, payment, contributor) {
 		
+		//Confirm confirmation of notification
 		if (confirm('Are you sure ' + (type == 1 ? 'you are part of this payment' : '') + (type == 2 ? 'this person has paid you' : '') + '?')) {
 			
 			//Confirm notification
@@ -741,7 +777,7 @@
 				false
 			);
 			
-			xmlhttp.send(); //And send with form data
+			xmlhttp.send(); //And send
 			
 			window.location.reload(); //Reload page to show updated information
 			

@@ -277,7 +277,68 @@
 	}
 	
 	/*
-	 * Handle notification of contributor payment
+	 * Handle host user contributor payment notification checks
+	 */
+	if (isset($_GET['checkNotify'])) {
+		
+		$connection = establish_connection(); //Establish database connection
+		
+		//Generate SQL for check for completed payment
+		$sql = "SELECT *
+				FROM contributes
+				WHERE user_id = {$_GET['checkNotify']} AND payment_id = {$_GET['pid']} AND settled = 1";
+		
+		$result = $connection->query($sql); //And execute
+		
+		//If notification exists
+		if ($result->num_rows > 0) {
+			echo 'true'; //Echo true
+		}
+		//Else, check for notification
+		else {
+			
+			//Generate SQL for check for notification
+			$sql = "SELECT *
+					FROM notification
+					WHERE sender_id = {$_GET['checkNotify']} AND payment_id = {$_GET['pid']} AND type = 2 AND confirmed = 0";
+			
+			$result = $connection->query($sql); //And execute
+			
+			//If notification exists
+			if ($result->num_rows > 0) {
+				echo 'true'; //Echo true
+			}
+			
+		}
+		
+		$connection->close(); //Close database connection
+		
+	}
+	
+	/*
+	 * Handle notifying host user of contributor payment
+	 */
+	if (isset($_GET['notify'])) {
+		
+		$connection = establish_connection(); //Establish database connection
+		
+		//Generate SQL for adding new notification
+		$sql = "INSERT INTO notification (sender_id, recipient_id, payment_id, type)
+				VALUES (
+					'{$_GET['notify']}',
+					(SELECT host_user FROM payment WHERE id = {$_GET['pid']}),
+					'{$_GET['pid']}',
+					'2'
+				)";
+		
+		$connection->query($sql); //And execute
+		
+		$connection->close(); //Close database connection
+		
+	}
+	
+	/*
+	 * Handle contributor payment
 	 */
 	if (isset($_GET['paid']) && isset($_GET['contributor'])) {
 		
