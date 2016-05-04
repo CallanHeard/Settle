@@ -579,7 +579,8 @@ form input[type="submit"] {
 
 /* Notification details */
 .notification p {
-	padding-top:	20px;
+	margin-bottom:	1px;
+	padding-top:	10px;
 	color:			#3366BB;
 }
 
@@ -588,8 +589,8 @@ form input[type="submit"] {
 	font-weight: bold;
 }
 
-/* Notification HR */
-.notification hr {
+/* HR in notification list */
+#notifications hr {
 	margin-top:			15px;
 	margin-bottom:		0;
 	margin-right:		-10px;

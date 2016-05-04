@@ -90,7 +90,7 @@
 		$connection = establish_connection(); //Establish database connection
 		
 		//Generate SQL
-		$sql = "SELECT n.id, n.sender_id, n.recipient_id, n.payment_id, n.type, n.confirmed, u.id AS 'sender_id', u.first_name AS 'sender_first_name', u.last_name AS 'sender_last_name', p.name AS 'payment'
+		$sql = "SELECT n.id, n.sender_id, n.recipient_id, n.payment_id, n.type, n.confirmed, u.id AS 'sender_id', u.first_name AS 'sender_first_name', u.last_name AS 'sender_last_name', p.id AS 'payment_id', p.name AS 'payment'
 				FROM notification n, user u, payment p
 				WHERE n.recipient_id = {$_GET['notifications']} AND n.confirmed = 0 AND u.id = n.sender_id AND p.id = n.payment_id";
 		
@@ -118,7 +118,7 @@
 	/*
 	 * Handle notification confirmation
 	 */
-	if (isset($_GET['confirm'])) {
+	if (isset($_GET['confirm']) && isset($_GET['type'])) {
 		
 		$connection = establish_connection(); //Establish database connection
 		
@@ -127,23 +127,33 @@
 		
 		$connection->query($sql); //And execute
 		
-		//Generate SQL for full payment confirmation check
-		$sql = "SELECT *
-				FROM notification
-				WHERE payment_id = (SELECT payment_id FROM notification WHERE id = {$_GET['confirm']}) AND type = 1 AND confirmed = 0";
+		//If type is adding someone to a payment
+		if ($_GET['type'] == 1) {
 		
-		$result = $connection->query($sql); //And execute
+			//Generate SQL for full payment confirmation check
+			$sql = "SELECT *
+					FROM notification
+					WHERE payment_id = (SELECT payment_id FROM notification WHERE id = {$_GET['confirm']}) AND type = 1 AND confirmed = 0";
+			
+			$result = $connection->query($sql); //And execute
+			
+			//If there is no results, payment fully confirmed
+			if ($result->num_rows == 0) {
+				
+				//Generate SQL for update
+				$sql = "UPDATE payment p
+						SET p.confirmed = 1
+						WHERE p.id = (SELECT n.payment_id FROM notification n WHERE n.id = {$_GET['confirm']})";
+						
+				$connection->query($sql); //And execute
+				
+			}
+			
+		}
 		
-		//If there is no results, payment fully confirmed
-		if ($result->num_rows == 0) {
-			
-			//Generate SQL for update
-			$sql = "UPDATE payment p
-					SET p.confirmed = 1
-					WHERE p.id = (SELECT n.payment_id FROM notification n WHERE n.id = {$_GET['confirm']})";
-					
-			$connection->query($sql); //And execute
-			
+		//If type is confirming payment
+		if ($_GET['type'] == 2) {
+			header("Location: handle.php?paid={$_GET['pid']}&contributor={$_GET['cid']}"); //Execute payment confirmation
 		}
 		
 		$connection->close(); //Close database connection
@@ -355,16 +365,16 @@
 			
 			$connection = establish_connection(); //Establish database connection
 		
-			$total	= $_POST['pounds'].'.'.$_POST['pennies'];						//Total payment amounts combined
-			$amount	= floor(($total / (count($_POST['members']) + 1)) * 100) / 100;	//Each member contribution amount (+1 for host who has paid) (rounded down to nearest penny)
+			$total	= mysqli_real_escape_string($connection, $_POST['pounds']).'.'.mysqli_real_escape_string($connection, $_POST['pennies']);	//Total payment amounts combined
+			$amount	= floor(($total / (count($_POST['members']) + 1)) * 100) / 100;																//Each member contribution amount (+1 for host who has paid) (rounded down to nearest penny)
 			
 			/* TODO again, very bad - should be transaction handling rollbacks etc */
 			
 			//Generate SQL for creating new payment
 			$sql = "INSERT INTO payment (name, description, total, host_user, contributors, date)
 					VALUES (
-						'{$_POST['name']}',
-						'".(isset($_POST['description']) ? $_POST['description'] : '')."',
+						'".mysqli_real_escape_string($connection, $_POST['name'])."',
+						'".(isset($_POST['description']) ? mysqli_real_escape_string($connection, $_POST['description']) : '')."',
 						'".($total - $amount)."',
 						'{$_GET['id']}',
 						'".count($_POST['members'])."',

@@ -176,10 +176,10 @@
 			
 			//Generate mark-up
 			returnString += '<!-- Notification -->\
-<li class="notification clear" onclick="confirmNotification(\'' + this.id + '\');">\
+<li class="notification clear" onclick="confirmNotification(\'' + this.id + '\', ' + this.type + ', ' + this.paymentId + ', ' + this.senderId + ');">\
 <img src="' + server + profiles + this.senderId + '.jpg" alt="' + this.senderName + '\'s Profile Image" />\
 <p><span>' + this.senderName + '</span> ' + this.message + ' "<span>' + this.payment + '</span>"</p>\
-<hr /></li>';
+</li><hr />';
 			
 			return returnString; //Return generated mark-up
 			

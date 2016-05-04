@@ -727,14 +727,21 @@
 	/*
 	 * confirmNotification function for handling notification confirmation
 	 */
-	function confirmNotification(notification) {
+	function confirmNotification(notification, type, payment, contributor) {
 		
-		if (confirm('Are you sure?')) {
+		if (confirm('Are you sure ' + (type == 1 ? 'you are part of this payment' : '') + (type == 2 ? 'this person has paid you' : '') + '?')) {
 			
 			//Confirm notification
-			xmlhttp = new XMLHttpRequest();												//Create new AJAX request object
-			xmlhttp.open('GET', server + handle + 'confirm=' + notification, false);	//Specify AJAX request
-			xmlhttp.send();																//And send with form data
+			xmlhttp = new XMLHttpRequest(); //Create new AJAX request object
+			
+			//Specify AJAX request
+			xmlhttp.open(
+				'GET',
+				server + handle + 'confirm=' + notification + '&type=' + type + '&pid=' + payment + '&cid=' + contributor,
+				false
+			);
+			
+			xmlhttp.send(); //And send with form data
 			
 			window.location.reload(); //Reload page to show updated information
 			
