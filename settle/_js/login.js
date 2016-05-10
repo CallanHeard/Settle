@@ -10,6 +10,6 @@
 /*
  * login function for handling app log ins
  */
-	function login(id) {
-		return true;
+	function login() {
+		alert();
 	}

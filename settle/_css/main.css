@@ -60,6 +60,62 @@ body > * {
 	padding: 10px;
 }
 
+/* Login page logo */
+img.logo {
+	display:	block;
+	margin:		100px auto 25px;
+	padding:	0;
+	width:		150px;
+}
+
+/* Login page separator */
+hr.logo {
+	margin:				0;
+	border:				0;
+	padding:			0;
+	height:				1px;
+	background-image:	linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1), rgba(221, 221, 221, 0));
+}
+
+/* Login form inputs */
+form.login input {
+	margin-bottom:	10px;
+	width:			100%;
+	font-size:		18px;
+}
+
+/* Form submit button fixed bottom position and gradient border */
+form.login div.wrapper {
+	margin:			0;
+	margin-top:		20px;
+	padding-top:	1px;
+	padding-bottom:	1px;
+	width:			100%;
+	background:		linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1), rgba(221, 221, 221, 0));
+}
+
+form.login div.wrapper a {
+text-align:	center;
+	display:		block;
+	margin:			0;
+	padding:		10px;
+    font-size:		16px;
+    font-family:	Heading;
+	color:			#3366BB; /* Blue */
+	background:		#FFFFFF;
+	text-decoration:	none;
+}
+
+/* Form submit buttons */
+form.login input[type="submit"], form.newPayment input[type="submit"] {
+	margin:			0;
+	padding:		10px;
+    font-size:		16px;
+    font-family:	Heading;
+	color:			#3366BB; /* Blue */
+	background:		#FFFFFF;
+}
+
 /* Top bar */
 #topbar {
 	border-bottom: 1px solid #DDDDDD; /* Grey */
@@ -447,67 +503,67 @@ body > * {
 }
 
 /* Create payment form */
-form {
+form.newPayment {
 	padding-top: 20px; /* Nice bit of spacing from the top of the page */
 }
 
 /* Direct input children of the form */
-form > input, form > fieldset {
+form.newPayment > input, form > fieldset {
 	margin-bottom:	20px;
 	padding-top:	5px;
 }
 
 /* All form inputs */
-form input {
+form.newPayment input {
 	width: 100%;
 	color: #3366BB;
 }
 
 /* Input placeholder colour */
-form input::-webkit-input-placeholder {
+form.newPayment input::-webkit-input-placeholder {
 	color: #BBBBBB;
 }
 
-form label span, form legend span {
+form.newPayment label span, form.newPayment legend span {
 	color: #666666;
 }
 
 /* Payment amount labels */
-form label[for="pounds"], form label[for="pennies"] {
+form.newPayment label[for="pounds"], form.newPayment label[for="pennies"] {
 	font-family: Mono;
 }
 
 /* Payment amount inputs */
-form input[name="pounds"], form input[name="pennies"] {
+form.newPayment input[name="pounds"], form.newPayment input[name="pennies"] {
 	width:			50px;
 	font-family:	Mono;
 }
 
 /* Payment amount pounds right-align */
-form input[name="pounds"] {
+form.newPayment input[name="pounds"] {
 	text-align: right;
 }
 
 /* Labels for groups of inputs */
-form fieldset legend {
+form.newPayment fieldset legend {
 	float: left;
 	width: 100%;
 }
 
 /* Add member button */
-form fieldset legend i {
+form.newPayment fieldset legend i {
 	float:		right;
 	margin-top:	-10px;
 	padding:	10px;
 }
 
 /* Add member button active state */
-form fieldset legend i:active {
+form.newPayment fieldset legend i:active {
 	color: #3366BB /* Blue */
 }
 
 /* HRs in form */
-form hr {
+form.newPayment hr {
 	margin:				0 -10px 20px;
 	border:				0;
 	padding:			0;
@@ -516,7 +572,7 @@ form hr {
 }
 
 /* List of members being added to the payment */
-form #members {
+form.newPayment #members {
 	margin-bottom:	20px;
 	height:			175px;
 	width:			100%;
@@ -525,16 +581,16 @@ form #members {
 }
 
 /* New member PIN input */
-form #newMember {
+form.newPayment #newMember {
 	margin-bottom: 10px;
 }
 
-form #members .user p {
+form.newPayment #members .user p {
 	color: #3366BB; /* Blue */
 }
 
-/* Submit button fixed bottom position and gradient border */
-form div.wrapper {
+/* New payment form submit button fixed position at bottom of window */
+form.newPayment div.wrapper {
 	position:		fixed;
 	bottom:			0;
 	margin:			0;
@@ -542,15 +598,6 @@ form div.wrapper {
 	padding-top:	1px;
 	width:			100%;
 	background:		linear-gradient(to right, rgba(221, 221, 221, 0), rgba(221, 221, 221, 1), rgba(221, 221, 221, 0));
-}
-
-/* Submit button */
-form input[type="submit"] {
-	padding:		10px;
-    font-size:		16px;
-    font-family:	Heading;
-	color:			#3366BB; /* Blue */
-	background:		#FFFFFF;
 }
 
 /* Heading for notifications page */
